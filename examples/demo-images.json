@@ -1,0 +1,84 @@
+{
+  "brand": {
+    "name": "مساحة معرفة",
+    "handle": "@yourbrand",
+    "category": "مهارات التعلم",
+    "logo": "assets/logo.svg",
+    "background": "#111418",
+    "foreground": "#F7F5F1",
+    "accent": "#F3C969",
+    "muted": "#B5BDC8",
+    "surface": "#232A33",
+    "font_family": "Cairo, Noto Sans Arabic, DejaVu Sans, sans-serif"
+  },
+  "design": {
+    "direction": "editorial"
+  },
+  "slides": [
+    {
+      "kind": "cover",
+      "eyebrow": "دليل عملي",
+      "headline": "كيف تجعل المعلومة أسهل للفهم؟",
+      "body": "أربع خطوات بسيطة لتقديم الأفكار بوضوح.",
+      "image": {
+        "src": "assets/desk.jpg",
+        "alt": "مكتب دراسة بإضاءة دافئة وأوراق مسطرة متناثرة",
+        "layout": "background",
+        "overlay": 0.68,
+        "rights": "generated"
+      }
+    },
+    {
+      "kind": "statement",
+      "eyebrow": "١ / ابدأ",
+      "headline": "حدد الفكرة الأساسية",
+      "body": "ما الرسالة الوحيدة التي أريد أن يتذكرها القارئ؟",
+      "image": {
+        "src": "assets/desk.jpg",
+        "alt": "أوراق مسطرة تحت ضوء مصباح",
+        "layout": "top",
+        "position": "50% 70%",
+        "rights": "generated"
+      }
+    },
+    {
+      "kind": "steps",
+      "eyebrow": "٢ / رتّب",
+      "headline": "ابنِ مسارًا واضحًا",
+      "bullets": [
+        "قدّم الفكرة",
+        "اشرحها بمثال",
+        "اختم بخطوة عملية"
+      ],
+      "image": {
+        "src": "assets/chart.png",
+        "alt": "رسم توضيحي لأعمدة متصاعدة يبرز العمود الأخير",
+        "layout": "side",
+        "fit": "contain",
+        "rights": "generated"
+      }
+    },
+    {
+      "kind": "statement",
+      "eyebrow": "٣ / وضّح",
+      "headline": "استخدم مثالًا قريبًا",
+      "body": "المثال الجيد يقرّب الفكرة المجردة دون أن يغيّر معناها.",
+      "decorative": "rings"
+    },
+    {
+      "kind": "cta",
+      "eyebrow": "الخطوة التالية",
+      "headline": "جرّبها في منشورك القادم",
+      "body": "اختر فكرة واحدة وطبّق عليها هذه الخطوات.",
+      "cta": "ما الخطوة التي ستبدأ بها؟",
+      "image": {
+        "src": "assets/desk.jpg",
+        "alt": "مكتب دراسة بإضاءة دافئة",
+        "layout": "background",
+        "overlay": 0.78,
+        "position": "right top",
+        "rights": "generated"
+      }
+    }
+  ]
+}

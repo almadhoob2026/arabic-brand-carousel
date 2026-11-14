@@ -8,7 +8,8 @@
 - `scripts/render.py`: يحوّل ملف JSON إلى HTML وصور PNG وصورة معاينة وZIP.
 - `scripts/audit.py`: يتحقق من المقاسات والعدد والملفات ويصدر `audit.json`.
 - `scripts/critique.py` و`scripts/taste.py`: فحص مبدئي وتوجهات التصميم (الإصدار 3).
-- `examples/demo.json`: مثال عربي من سبع شرائح.
+- `examples/demo.json`: مثال عربي من سبع شرائح (نصي).
+- `examples/demo-images.json`: مثال بالصور والشعار يستخدم التخطيطات الثلاثة (`background` و`top` و`side`). الصور في `examples/assets/` مولّدة برمجيًا ومسموح استخدامها.
 - `tests/`: اختبارات صحة البيانات وأمان إدراج النصوص.
 
 ## طريقة التثبيت
@@ -31,6 +32,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 python -m pip install -r requirements.txt
 python -m playwright install chromium
 python scripts/render.py examples/demo.json --out output/demo
+python scripts/render.py examples/demo-images.json --out output/demo-images  # مع صور وشعار
 python scripts/audit.py output/demo --deck examples/demo.json
 python -m unittest discover -s tests -v
 ```
