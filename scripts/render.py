@@ -336,9 +336,27 @@ def contact_sheet(pngs, size, out):
     montage.save(out)
 
 
+GENERATED = ('carousel.html', 'deck.json', 'geometry.json', 'audit.json', 'contact-sheet.png', 'carousel.pdf',
+             'carousel.zip', 'caption.txt', 'alt-text.txt', 'publish.json')
+SLIDE_PNG = re.compile(r'^slide-\d{2}\.png$')
+
+
+def clean_generated(dest):
+    """Remove files this renderer wrote in an earlier run, so no stale slide survives.
+
+    Only exact generated names are touched (slide-NN.png and the files above);
+    anything else the user keeps in the folder stays."""
+    if not dest.is_dir():
+        return
+    for f in dest.iterdir():
+        if f.is_file() and (f.name in GENERATED or SLIDE_PNG.match(f.name)):
+            f.unlink()
+
+
 def render_format(browser, deck, assets, dest, fmt, pdf):
     spec = FORMATS[fmt]
     w, h = spec['size']
+    clean_generated(dest)
     dest.mkdir(parents=True, exist_ok=True)
     markup = make_html(deck, assets, fmt)
     (dest/'carousel.html').write_text(markup, encoding='utf-8')
@@ -383,10 +401,14 @@ def render_format(browser, deck, assets, dest, fmt, pdf):
 
 def render(deck_path, outdir, formats=None, pdf=False):
     """Render each format: portrait into outdir, others into outdir/<format>/."""
+    root = Path(outdir)
+    src = Path(deck_path).resolve()
+    targets = [root] + [root/f['folder'] for f in FORMATS.values() if f['folder']]
+    if any(src.parent == t.resolve() and src.name in GENERATED for t in targets):
+        raise ValueError(f'{deck_path} would be overwritten by the output; keep the deck outside --out')
     deck = load_deck(deck_path)
     fmts = parse_formats(formats if formats is not None else deck.get('formats'))
     assets = deck_assets(deck, Path(deck_path).parent)
-    root = Path(outdir)
     outputs = []
     with sync_playwright() as p:
         args = {'headless': True}
@@ -398,6 +420,14 @@ def render(deck_path, outdir, formats=None, pdf=False):
             folder = FORMATS[fmt]['folder']
             outputs.append(render_format(browser, deck, assets, root/folder if folder else root, fmt, pdf))
         browser.close()
+    # Manifest of what this run produced; audit.py checks exactly these folders.
+    (root/'render.json').write_text(json.dumps({
+        'formats': {f: FORMATS[f]['folder'] or '.' for f in fmts}, 'slides': len(deck['slides']), 'pdf': pdf},
+        ensure_ascii=False, indent=2), encoding='utf-8')
+    stale = [FORMATS[f]['folder'] for f in FORMATS if FORMATS[f]['folder'] and f not in fmts
+             and (root/FORMATS[f]['folder']/'geometry.json').exists()]
+    for folder in stale:
+        print(f'NOTE: {root/folder} is from an earlier render and was not updated; it is not audited.')
     return outputs
 
 

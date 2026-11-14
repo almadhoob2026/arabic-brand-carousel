@@ -4,7 +4,9 @@ description: >-
   Plan, write, design, render and audit a branded Arabic RTL Instagram carousel
   from a topic or brief. Use for Arabic social media carousel requests involving
   content strategy, slide storytelling, typography, visual consistency, or export.
-  Supports 1080x1350 PNG slides, editable HTML and accessible review previews.
+  Asks for settings first (formats, slide count, register, style, identity), then
+  renders 12 layouts with images and logo as portrait 1080x1350, square, story,
+  LinkedIn PDF and a publishing pack (caption, hashtags, alt text).
   Triggers on Arabic requests such as "كاروسيل", "سوي لي كاروسيل", "شرائح انستقرام",
   "بوست سلايدات" or "حوّل هذا الموضوع إلى كاروسيل".
 ---
@@ -15,12 +17,15 @@ description: >-
 Turn the user's topic into a concise, accurate, visually consistent Arabic carousel. Act as an editor, designer, Arabic typesetter and QA reviewer. The deliverable is not only a list of slide captions: it is a rendered and checked collection of assets plus an editable source.
 
 ## Operating principles
-1. **Reuse context first.** Infer brand, audience, dialect and preferred style from provided references. Ask at most one compact question only if a truly essential detail is missing. When no identity is supplied, use a clearly declared neutral identity (near-black / warm white / one accent); never fabricate the client's logo.
+1. **Reuse context first.** Infer brand, audience, dialect and preferred style from provided references. Apart from the settings step (Stage 0), ask at most one compact question only if a truly essential detail is missing. When no identity is supplied, use a clearly declared neutral identity (near-black / warm white / one accent); never fabricate the client's logo.
 2. **Default to Modern Standard Arabic** for institutions and professional accounts; match the user's dialect for informal brands when requested or clearly established. Avoid mixing registers accidentally.
 3. **Content before aesthetics.** Choose the smallest slide count that tells the story. Default 7; typically 5–8, maximum 10 unless requested. No padding/filler slides.
 4. **Do not hallucinate evidence.** Verify time-sensitive data against credible sources when browsing is available. Put concise source labels or citations on relevant slides and provide full references in an accompanying note. If verification is unavailable, remove numerical claims or label them as unverified rather than inventing sources.
 5. **Source and permission safety.** Use brand assets and photographs supplied/licensed by the user or explicitly approved/generated visuals. Do not download, embed, or redistribute unauthorized fonts or imagery. Never claim a supplied design is unchanged if it was modified.
 6. **Respect platform and system constraints.** Follow the host environment's tool rules. Prefer image-generation tools for requested visual creations when the host requires them; this repository's browser renderer is an optional deterministic implementation, not a way to bypass tool restrictions.
+
+## Stage 0 — Settings before execution
+Before writing copy or rendering, settle the run's settings: formats (portrait / square / story / PDF), slide count, language register, visual direction, identity and images. Run `scripts/settings.py show` in the user's project. Follow `references/settings.md`: in Claude Code show the choices as interactive question cards (`AskUserQuestion`), offer saved defaults from `.carousel/settings.json` as a single "use saved settings?" card, skip the step for `--quick` when settings are saved, never ask what the request already states, and save with `settings.py set` when the user wants defaults. Without a question-card tool, ask the same choices once as a short numbered list with defaults. Then start the deck from `settings.py deck-fields`.
 
 ## Stage 1 — Intake and brand memory
 Extract a structured brief with: topic, takeaway, objective (awareness/education/leads/announcement), audience, tone/register, CTA, constraints, brand name/handle/logo, color palette, assets, citations and target platform. Infer what is known. Ask only for a missing logo/wordmark and palette when meaningful brand fidelity cannot otherwise be achieved; proceed with declared defaults if the user prefers. Never ask users to choose font or layout unless they ask.
@@ -48,7 +53,7 @@ Construct an outline, then write exact copy. Slide 1: 1 arresting idea + clear s
 Use varied, purposeful compositions. The renderer has real layouts for each, driven by structured fields (full table in `references/schema.md`): `metric` for one sourced number, `compare` for two options (or `"kind": "before-after"` for a change), `quote`, `timeline` for stages, `cards` for 2–4 parallel ideas, `answer` for a Q&A slide, `bullets` for steps or `"kind": "checklist"`. Put the copy into the matching field and omit `kind` to let the layout be inferred. Do not repeat the same interior layout more than twice in a row. Reserve enough whitespace to make the headline dominant. Headlines should normally fit 2–4 lines; rewrite before shrinking. Never sacrifice Arabic legibility for decorative effects.
 
 ## Stage 4 — Layout & type system
-Default Instagram portrait canvas: **1080×1350 px**. RTL direction. Default safe area ≥80 px around edges, with additional reserve for a persistent brand bar. Repeat counter (upper left), category tag (upper right), brand mark (lower left), swipe cue (lower right except final). Adapt these positions only when brand assets or visual hierarchy require it.
+Default Instagram portrait canvas: **1080×1350 px**. RTL direction. Keep text at least 64 px from every edge (the geometry check enforces this; stories reserve 250 px on top and 340 px at the bottom), with additional reserve for a persistent brand bar. Repeat counter (upper left), category tag (upper right), brand mark (lower left), swipe cue (lower right except final). Adapt these positions only when brand assets or visual hierarchy require it.
 
 Typography is responsive: initial headline range ~76–124 px; supporting text ~38–52 px; small labels ~26–36 px. These are *starting values*, not fixed absolutes. The headline's width, line breaks, and physical bounds determine size. Do not reduce supporting copy below readable mobile scale just to fit more words. Cairo (OFL) is bundled and embedded automatically; for a brand typeface use `brand.font_file` with a local font the user is licensed to use. Never rely on network font downloads. Carefully test Arabic joining, diacritics, Arabic-Indic digits, parentheses, mixed Latin segments, RTL alignment and punctuation.
 
@@ -96,6 +101,7 @@ Provide: PNG slides (per requested format), a compact montage/contact sheet, edi
 - `references/design-system.md`: detailed layout and RTL rules
 - `references/qa-rubric.md`: measurable 100-point review criteria
 - `references/schema.md`: input and output contract
+- `references/settings.md`: the settings cards shown before a run
 - `references/taste-engine.md`: style directions and five design parameters
 - `references/visual-directions.md`: visual direction selection
 - `references/anti-patterns.md`: objective defects versus subjective warnings

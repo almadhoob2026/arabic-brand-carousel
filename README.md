@@ -11,11 +11,12 @@
 **المزايا**
 - تعليمات `SKILL.md` مستقلة وقابلة للاستخدام في بيئات المساعدات التي تدعم المهارات.
 - خط سير إنتاج كامل من الفكرة إلى الصور، مع ضبط عربي RTL فعلي.
-- محرّك HTML/Chromium محلي لإخراج شرائح 1080×1350.
+- محرّك HTML/Chromium محلي يُخرج الشرائح بمقاسات المنشور والمربع والستوري، مع PDF.
 - **دعم الصور والشعار**: صورة خلفية كاملة مع طبقة تعتيم، أو صورة أعلى الشريحة، أو صورة جانبية، وشعار بجانب الحساب. الصور ملفات محلية تُضمَّن داخل الملف، مع فحص التباين والدقة وحقوق الاستخدام.
 - ملف JSON قابل للتعديل، HTML مستقل، PNG لكل شريحة، صورة معاينة مجمعة، وملف ZIP.
 - **محرر مرئي تجريبي يعمل داخل المتصفح**: تعديل العلامة والشرائح، إضافة/نسخ/ترتيب، معاينة وتصدير PNG/JSON دون خادم. [جرّب المحرر](editor/index.html) (حمّل الملف وافتحه محليًا).
-- اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
+- **صفحة إعدادات قبل التنفيذ**: بطاقات اختيار للمقاسات وعدد الشرائح واللغة والطابع والهوية والصور، تُحفظ كإعدادات افتراضية للمشروع.
+- اختبارات آلية (منها إخراج حقيقي في المتصفح)، ومقياس جودة تحريري من 100 نقطة.
 - **12 تخطيطًا فعليًا** (الإصدار 4): رقم كبير، مقارنة، قبل وبعد، اقتباس، خط زمني، قائمة تحقق، بطاقات، سؤال وجواب، إلى جانب الغلاف والنص والخطوات والدعوة. يُختار التخطيط تلقائيًا من نوع المحتوى.
 - **خط Cairo مرفق** (رخصة SIL OFL) ويُضمَّن في الملف، مع دعم ملف خط العلامة التجارية.
 - **ثلاثة مقاسات من ملف واحد**: منشور 1080×1350، مربع 1080×1080، ستوري 1080×1920 مع مناطق آمنة لواجهة انستقرام، وملف **PDF للينكدإن** بنص حقيقي قابل للبحث.
@@ -33,7 +34,8 @@ claude plugin marketplace add almadhoob2026/arabic-brand-carousel
 claude plugin install arabic-brand-carousel@almadhoob2026
 ```
 أعد تشغيل Claude Code. عند أول استخدام تُثبَّت المتطلبات تلقائيًا عبر `scripts/setup.sh`. الأوامر المتاحة:
-- `/carousel <الموضوع>`: كاروسيل كامل من موضوع أو خبر أو رابط.
+- `/carousel <الموضوع>`: كاروسيل كامل من موضوع أو خبر أو رابط، يبدأ ببطاقات الإعدادات (أضف `--quick` لاستخدام الإعدادات المحفوظة مباشرة).
+- `/carousel-settings`: ضبط الإعدادات الافتراضية للمشروع.
 - `/carousel-review <deck.json>`: مراجعة كاروسيل موجود وإصلاحه قبل النشر.
 - `/carousel-brand <الشعار> <الاسم>`: ملف هوية قابل لإعادة الاستخدام من شعارك.
 
@@ -63,7 +65,8 @@ Restart Claude Code. Dependencies are installed on first use by `scripts/setup.s
 
 | Command | Does |
 |---|---|
-| `/carousel <topic, text or link>` | full workflow: brief → copy → layouts → render → audit |
+| `/carousel <topic, text or link> [--quick]` | settings cards → brief → copy → layouts → render → audit |
+| `/carousel-settings [show\|clear]` | set this project's defaults (`.carousel/settings.json`) |
 | `/carousel-review <deck.json>` | critique + render + audit + rubric, fixes after approval |
 | `/carousel-brand <logo> <name>` | reusable brand profile from a logo, with contrast report |
 
@@ -118,6 +121,7 @@ output/demo/
   caption.txt             # caption + hashtags, ready to paste
   alt-text.txt            # alt text per slide
   publish.json            # the publishing pack as data
+  render.json             # formats produced by this run (audit checks exactly these)
   square/  story/         # with --formats: same files per extra format
   audit.json              # programmatic checks (after audit)
 ```
@@ -145,6 +149,7 @@ scripts/formats.py            # portrait / square / story sizes and safe areas
 scripts/publish.py            # caption, hashtags, alt text
 scripts/brand.py              # brand profiles + palette from logo (CLI: init)
 scripts/setup.sh              # one-time .venv + dependencies
+scripts/settings.py           # project defaults chosen in the settings step
 scripts/eval_triggers.py      # trigger eval runner (uses the claude CLI)
 .claude-plugin/               # plugin.json + marketplace.json
 commands/                     # /carousel, /carousel-review, /carousel-brand
