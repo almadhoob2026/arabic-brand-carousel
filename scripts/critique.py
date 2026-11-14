@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from render import load_deck
 from taste import taste_profile, suggest_layouts
+from layouts import infer_kind, slide_text
 
 
 def rgb(color):
@@ -82,6 +83,7 @@ def critique(deck, base_dir=None):
         add('warning', 'contrast-secondary', None, f'Muted text contrast {muted_ratio}:1 below 4.5:1', 'Increase muted text contrast or limit it to noncritical decoration.')
     headlines = {}
     prev_deco = None
+    kinds = []
     deco_streak = 0
     for i, slide in enumerate(slides, 1):
         head = re.sub(r'\s+', ' ', slide['headline']).strip()
@@ -90,7 +92,7 @@ def critique(deck, base_dir=None):
         headlines[head] = i
         if len(head) > 75:
             add('warning', 'long-headline', i, f'Headline contains {len(head)} characters', 'Condense the headline before shrinking typography.')
-        words = ' '.join([head, str(slide.get('body', '')), *slide.get('bullets', [])]).split()
+        words = slide_text(slide).split()
         if len(words) > 40:
             add('warning', 'content-density', i, f'{len(words)} words exceed the 40-word editorial target', 'Split supporting content or simplify copy.')
         if slide.get('metric') and not slide.get('source'):
@@ -100,6 +102,13 @@ def critique(deck, base_dir=None):
         if deco != 'none' and deco_streak >= 3:
             add('advice', 'repetitive-decoration', i, f'{deco} used in {deco_streak} consecutive slides', 'Change the visual composition if repetition does not reinforce the story.')
         prev_deco = deco
+        kinds.append(infer_kind(slide, i, len(slides)))
+    interior = kinds[1:-1]
+    for j in range(2, len(interior)):
+        if interior[j] == interior[j-1] == interior[j-2]:
+            add('advice', 'repetitive-layout', j + 2, f'Layout "{interior[j]}" used on three consecutive slides',
+                'Use a comparison, metric, quote, timeline, grid or Q&A layout where the content allows.')
+            break
     if base_dir is not None:
         image_findings(deck, base_dir, colors, add)
     if not slides[-1].get('cta'):

@@ -81,7 +81,8 @@ def _load(path_str, mtime):
             mean_rgb = tuple(round(c) for c in ImageStat.Stat(rgb).mean)
             # A bright-region sample (90th percentile by luminance): text contrast is
             # limited by the light details under it, not by the image's average colour.
-            pixels = sorted(rgb.getdata(), key=lambda c: 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2])
+            raw = rgb.tobytes()
+            pixels = sorted((tuple(raw[k:k + 3]) for k in range(0, len(raw), 3)), key=lambda c: 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2])
             bright_rgb = pixels[int(len(pixels) * 0.9)]
     uri = f'data:{mime};base64,' + base64.b64encode(data).decode('ascii')
     return {'path': str(path), 'mime': mime, 'bytes': len(data), 'uri': uri,
@@ -107,6 +108,7 @@ def deck_assets(deck, base_dir):
         if info:
             total += info['bytes']
         slides.append(info)
+    font = str(resolve(deck['brand']['font_file'], base_dir)) if deck['brand'].get('font_file') else None
     if total > MAX_TOTAL_BYTES:
         raise ValueError(f'Images total {total // (1024 * 1024)} MB; limit is {MAX_TOTAL_BYTES // (1024 * 1024)} MB')
-    return {'logo': logo, 'slides': slides}
+    return {'logo': logo, 'slides': slides, 'font': font}
