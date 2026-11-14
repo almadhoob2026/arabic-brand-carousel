@@ -9,7 +9,7 @@ description: >-
   "بوست سلايدات" or "حوّل هذا الموضوع إلى كاروسيل".
 ---
 
-# Arabic Brand Carousel — production workflow (v4.0)
+# Arabic Brand Carousel — production workflow (v5.0)
 
 ## Mission
 Turn the user's topic into a concise, accurate, visually consistent Arabic carousel. Act as an editor, designer, Arabic typesetter and QA reviewer. The deliverable is not only a list of slide captions: it is a rendered and checked collection of assets plus an editable source.
@@ -24,6 +24,8 @@ Turn the user's topic into a concise, accurate, visually consistent Arabic carou
 
 ## Stage 1 — Intake and brand memory
 Extract a structured brief with: topic, takeaway, objective (awareness/education/leads/announcement), audience, tone/register, CTA, constraints, brand name/handle/logo, color palette, assets, citations and target platform. Infer what is known. Ask only for a missing logo/wordmark and palette when meaningful brand fidelity cannot otherwise be achieved; proceed with declared defaults if the user prefers. Never ask users to choose font or layout unless they ask.
+
+**Reusable brand profile.** If the project has `brands/*.json`, reference it with `"brand_profile": "brands/<name>.json"` instead of repeating brand values; deck values override the profile and profile hashtags become default publish hashtags. With only a logo, run `scripts/brand.py init --logo <file> --name <name> --out brands/<slug>.json` and show the user the derived palette and contrast report for confirmation; a derived palette is never presented as the official brand guide.
 
 Brand tokens: background, foreground, accent, muted, surface, font family, safe zones, typography scale, highlight style, image treatment, category label and brand mark placement. Inspect references for these. If brand guidance conflicts with the default template, brand guidance wins unless it compromises readability or safety.
 
@@ -57,12 +59,18 @@ Color: WCAG-inspired strong contrast for text. Limit to one dominant accent plus
 ## Stage 5 — Production
 Run the scripts from this skill's own directory (the folder containing this `SKILL.md`), or prefix paths with it. The repository's example implementation accepts a JSON slide deck and creates one editable HTML file, individual PNG files and a contact sheet. See `README.md` and `examples/demo.json`. When using it:
 
+Python: use `.venv/bin/python` in this skill's directory; if it is missing, run `bash scripts/setup.sh` once (creates `.venv`, installs requirements, and Chromium only when no system browser exists).
+
 ```bash
-python -m pip install -r requirements.txt
+bash scripts/setup.sh                       # once
 python scripts/render.py examples/demo.json --out output/demo
 python scripts/render.py examples/demo-images.json --out output/demo-images   # images + logo
 python scripts/audit.py output/demo --deck examples/demo.json
 ```
+
+**Formats and PDF.** Add `--formats portrait,square,story` (or `"formats": [...]` in the deck) when the user mentions stories, square posts or several platforms; extra formats render into `square/` and `story/`. Stories keep text out of Instagram's top 250 px and bottom 340 px. Add `--pdf` for LinkedIn document posts (vector text, one page per slide).
+
+**Publishing pack.** Always add `"publish": {"caption", "hashtags", "first_comment"?}` (caption ≤2,200 characters, ≤30 hashtags without spaces) and an `alt` on slides whose meaning is visual; slides without `alt` get one generated from their copy. The renderer writes `caption.txt`, `alt-text.txt` and `publish.json`. It never posts anything.
 
 If dependencies or browser are unavailable, report the limitation and supply a complete edit-ready deck/source instead of claiming renders exist. Render at native 1080×1350; do not upscale an image preview and pretend it is native resolution. Avoid remote scripts/fonts/images in the deterministic renderer.
 
@@ -81,7 +89,7 @@ Never call an automatic score a visually certified design. The report is preflig
 Open every rendered slide and the complete contact sheet. Iterate when any blocking fault occurs. Score against the 100-point rubric in `references/qa-rubric.md`, stating each deduction and its fix. A score below 90 means revise and recheck, not claim acceptance. The scoring is a human/editorial estimate, not automated proof of quality. Automated checks are supporting evidence only.
 
 ## Stage 7 — Delivery and revisions
-Provide: PNG slides, a compact montage/contact sheet, editable HTML, deck JSON and optionally a ZIP. Explain the cover/story choice in 1–2 sentences. Keep iterations and original source, and ask for specific approval only where the user workflow calls for it. Clearly separate **review draft** from **approved final**; do not publish to accounts or external sites without authorization and an appropriate connected integration.
+Provide: PNG slides (per requested format), a compact montage/contact sheet, editable HTML, deck JSON, `caption.txt` and `alt-text.txt`, the PDF when requested, and optionally a ZIP. Explain the cover/story choice in 1–2 sentences. Keep iterations and original source, and ask for specific approval only where the user workflow calls for it. Clearly separate **review draft** from **approved final**; do not publish to accounts or external sites without authorization and an appropriate connected integration.
 
 ## Reference files
 - `references/editorial.md`: content strategy and fact checking

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "arabic-brand-carousel",
+  "version": "5.0.0",
+  "description": "Plan, write, design, render and audit branded Arabic RTL carousels: 12 layouts, images and logo, portrait/square/story, LinkedIn PDF and a publishing pack.",
+  "author": {
+    "name": "almadhoob2026",
+    "url": "https://github.com/almadhoob2026"
+  },
+  "homepage": "https://github.com/almadhoob2026/arabic-brand-carousel",
+  "repository": "https://github.com/almadhoob2026/arabic-brand-carousel",
+  "license": "MIT",
+  "keywords": ["arabic", "rtl", "carousel", "instagram", "linkedin", "design", "كاروسيل"],
+  "skills": ["./"]
+}

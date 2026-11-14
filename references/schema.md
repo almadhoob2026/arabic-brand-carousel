@@ -1,8 +1,11 @@
 # JSON deck contract (renderer v1)
 
 Root:
-- `brand` (required): `{name, handle?, category?, logo?, background?, foreground?, accent?, muted?, surface?, font_family?, font_file?}`
-- `slides` (required): 2–10 items, each with `{kind?, eyebrow?, headline, body?, bullets?, source?, cta?, decorative?, image?, metric?, compare?, quote?, timeline?, cards?, answer?}`.
+- `brand_profile` (optional): path to a reusable profile `{brand, design?, hashtags?}`; deck values override it. Create one with `scripts/brand.py init`.
+- `formats` (optional): any of `portrait` (1080×1350), `square` (1080×1080), `story` (1080×1920). CLI `--formats` overrides it.
+- `publish` (optional): `{caption ≤2200, hashtags[≤30], first_comment?}` → `caption.txt`, `publish.json`.
+- `brand` (required unless the profile supplies it): `{name, handle?, category?, logo?, background?, foreground?, accent?, muted?, surface?, font_family?, font_file?}`
+- `slides` (required): 2–10 items, each with `{kind?, eyebrow?, headline, body?, bullets?, source?, cta?, decorative?, image?, metric?, compare?, quote?, timeline?, cards?, answer?, alt?}`. `alt` (≤300 chars) is the accessibility text for the published image; when omitted it is generated from the slide copy into `alt-text.txt`.
 
 ## Layouts (v4)
 

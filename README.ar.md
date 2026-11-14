@@ -1,4 +1,4 @@
-# مهارة الكاروسيل العربي للعلامات التجارية — الإصدار 4.0
+# مهارة الكاروسيل العربي للعلامات التجارية — الإصدار 5.0
 
 مشروع مفتوح المصدر لإنشاء كاروسيل عربي من موضوع واحد، مع منهج تحرير وتصميم احترافي، ومحرّك محلي لإخراج HTML وPNG بمقاس 1080×1350، وفحوصات تقنية ومراجعة بصرية بشرية.
 
@@ -11,23 +11,33 @@
 - `examples/demo.json`: مثال عربي من سبع شرائح (نصي).
 - `scripts/layouts.py`: التخطيطات الاثنا عشر (رقم كبير، مقارنة، قبل وبعد، اقتباس، خط زمني، قائمة تحقق، بطاقات، سؤال وجواب…) مع اختيار التخطيط تلقائيًا من المحتوى.
 - `examples/demo-layouts.json`: شريحة لكل تخطيط جديد.
+- `scripts/formats.py` و`scripts/publish.py` و`scripts/brand.py`: المقاسات الثلاثة، وحزمة النشر، وملفات الهوية مع استخراج الألوان من الشعار.
+- `examples/demo-profile.json`: مثال يستخدم ملف هوية مشتركًا ومقاسين وحزمة نشر.
 - `examples/demo-images.json`: مثال بالصور والشعار يستخدم التخطيطات الثلاثة (`background` و`top` و`side`). الصور في `examples/assets/` مولّدة برمجيًا ومسموح استخدامها.
 - `tests/`: اختبارات صحة البيانات وأمان إدراج النصوص.
 
 ## طريقة التثبيت
 
-**Claude Code (على جهازك — الخيار الموصى به):**
+**Claude Code كإضافة (Plugin) — الأسهل:**
+```bash
+claude plugin marketplace add almadhoob2026/arabic-brand-carousel
+claude plugin install arabic-brand-carousel@almadhoob2026
+```
+أعد تشغيل Claude Code. عند أول استخدام تُثبَّت المتطلبات تلقائيًا عبر `scripts/setup.sh`. الأوامر المتاحة:
+- `/carousel <الموضوع>`: كاروسيل كامل من موضوع أو خبر أو رابط.
+- `/carousel-review <deck.json>`: مراجعة كاروسيل موجود وإصلاحه قبل النشر.
+- `/carousel-brand <الشعار> <الاسم>`: ملف هوية قابل لإعادة الاستخدام من شعارك.
+
+**Claude Code بالنسخ المباشر (بديل):**
 ```bash
 git clone https://github.com/almadhoob2026/arabic-brand-carousel.git ~/.claude/skills/arabic-brand-carousel
-cd ~/.claude/skills/arabic-brand-carousel
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m playwright install chromium   # غير ضروري إذا كان Chrome مثبتًا
+bash ~/.claude/skills/arabic-brand-carousel/scripts/setup.sh
 ```
-أعد تشغيل Claude Code، ثم اكتب `/arabic-brand-carousel` أو اطلب: «سوي لي كاروسيل عن ...». وللتثبيت داخل مشروع واحد فقط استخدم `.claude/skills/arabic-brand-carousel` بدل `~/.claude/skills/`.
+يعمل المجلد كإضافة تلقائيًا بنفس الأوامر. استخدم طريقة واحدة فقط من الطريقتين حتى لا تظهر المهارة مرتين.
 
 **تطبيق Claude (الويب/سطح المكتب):** حمّل المستودع كملف ZIP بحيث يكون `SKILL.md` داخل مجلد `arabic-brand-carousel/`، ثم من *Settings → Capabilities → Skills* اختر *Upload skill*. في هذه البيئة قد لا يتوفر Chromium، فتعمل المهارة على التحرير والتصميم وتسلّم ملف JSON/HTML قابلًا للإخراج محليًا.
 
-**التحديث:** `git -C ~/.claude/skills/arabic-brand-carousel pull`
+**التحديث:** `claude plugin update arabic-brand-carousel@almadhoob2026` للإضافة، أو `git -C ~/.claude/skills/arabic-brand-carousel pull` للنسخ المباشر.
 
 ## التشغيل
 ```bash
@@ -35,7 +45,8 @@ python -m pip install -r requirements.txt
 python -m playwright install chromium
 python scripts/render.py examples/demo.json --out output/demo
 python scripts/render.py examples/demo-images.json --out output/demo-images  # مع صور وشعار
-python scripts/render.py examples/demo-layouts.json --out output/demo-layouts  # كل التخطيطات
+python scripts/render.py examples/demo-layouts.json --out output/demo-layouts --formats portrait,square,story --pdf
+python scripts/render.py examples/demo-profile.json --out output/demo-profile   # ملف هوية + حزمة نشر
 python scripts/audit.py output/demo --deck examples/demo.json
 python -m unittest discover -s tests -v
 ```

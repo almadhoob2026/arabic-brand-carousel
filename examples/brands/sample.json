@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "name": "مساحة معرفة",
+    "handle": "@yourbrand",
+    "category": "كتابة المحتوى",
+    "background": "#191610",
+    "foreground": "#F6F5F4",
+    "accent": "#F3C969",
+    "muted": "#C7C4BC",
+    "surface": "#2D2920",
+    "font_family": "Cairo, Noto Sans Arabic, DejaVu Sans, sans-serif",
+    "logo": "../assets/logo.svg"
+  },
+  "design": {
+    "direction": "editorial"
+  },
+  "hashtags": [
+    "كتابة_المحتوى",
+    "تسويق_رقمي"
+  ]
+}
