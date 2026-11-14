@@ -225,6 +225,26 @@ class EditorBrowserTests(unittest.TestCase):
         self.assertTrue(self.page.is_hidden('#errors'))
         self.assertIn('مضمّنة في JSON', ' '.join(self.page.locator('.srcinfo').all_inner_texts()))
 
+    def test_v4_layout_fields_round_trip_unchanged(self):
+        deck = json.loads((EXAMPLES / 'demo-layouts.json').read_text(encoding='utf-8'))
+        deck['brand']['font_file'] = '../fonts/Cairo-Variable.ttf'
+        path = self.out / 'layouts.json'
+        path.write_text(json.dumps(deck, ensure_ascii=False), encoding='utf-8')
+        self.import_json(path)
+        self.assertTrue(self.page.is_hidden('#errors'))
+        for button in ('#save-json', '#save-json-embedded'):
+            exported = json.loads(self.download(button).read_text(encoding='utf-8'))
+            exported_design = exported.pop('design', None)
+            expected = dict(deck)
+            expected_design = expected.pop('design', None)
+            self.assertEqual(exported, expected)
+            if expected_design is not None:
+                self.assertEqual(exported_design, expected_design)
+        deck['brand']['font_file'] = 'https://example.com/font.ttf'
+        path.write_text(json.dumps(deck, ensure_ascii=False), encoding='utf-8')
+        self.import_json(path)
+        self.assertIn('brand.font_file', self.page.inner_text('#errors'))
+
     def test_rejects_unsafe_or_unsupported_files(self):
         evil = self.out / 'evil.svg'
         evil.write_text('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', encoding='utf-8')

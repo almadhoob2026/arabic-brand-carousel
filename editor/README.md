@@ -37,7 +37,7 @@ The editor supports the same image fields as `scripts/render.py` (full spec: [`r
 
 ## Limitations
 
-The editor is a **beta** companion and canvas-based preview. Its rendering can differ from the Python/Chromium production renderer. It does not produce ZIP files or post to Instagram. For publication-critical typography, use `python scripts/render.py deck.json` and visually inspect the resulting images. It does not automatically verify factual content or copyright permissions. The editor does not compute image-vs-text contrast; run `python scripts/critique.py` on the exported deck for that check.
+The editor is a **beta** companion and canvas-based preview. Its rendering can differ from the Python/Chromium production renderer. It does not produce ZIP files or post to Instagram. For publication-critical typography, use `python scripts/render.py deck.json` and visually inspect the resulting images. It does not automatically verify factual content or copyright permissions. The v4 layout fields (`metric`, `compare`, `quote`, `timeline`, `cards`, `answer`, and kinds such as `checklist` or `before-after`) and `brand.font_file` are accepted on import and exported unchanged, but the canvas preview does not draw those layouts yet; it shows the headline, body and other v3 fields only. Render with `scripts/render.py` to see them. The editor does not compute image-vs-text contrast; run `python scripts/critique.py` on the exported deck for that check.
 
 ## Arabic support
 
