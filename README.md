@@ -18,23 +18,35 @@
 - اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
 - **12 تخطيطًا فعليًا** (الإصدار 4): رقم كبير، مقارنة، قبل وبعد، اقتباس، خط زمني، قائمة تحقق، بطاقات، سؤال وجواب، إلى جانب الغلاف والنص والخطوات والدعوة. يُختار التخطيط تلقائيًا من نوع المحتوى.
 - **خط Cairo مرفق** (رخصة SIL OFL) ويُضمَّن في الملف، مع دعم ملف خط العلامة التجارية.
+- **ثلاثة مقاسات من ملف واحد**: منشور 1080×1350، مربع 1080×1080، ستوري 1080×1920 مع مناطق آمنة لواجهة انستقرام، وملف **PDF للينكدإن** بنص حقيقي قابل للبحث.
+- **حزمة نشر**: كابشن وهاشتاقات ووصف بديل لكل شريحة في ملفات جاهزة للصق.
+- **ملف هوية قابل لإعادة الاستخدام** (`brand_profile`) مع استخراج الألوان من الشعار وفحص التباين.
+- **إضافة لـ Claude Code** بثلاثة أوامر: `/carousel` و`/carousel-review` و`/carousel-brand`.
 - **فحص هندسي فعلي** من المتصفح: الهوامش الآمنة، تداخل النصوص، النص فوق الصور، تجاوز المساحة، عدد أسطر العنوان، وأصغر خط.
 - لا يحتاج إلى اتصال خارجي وقت الإخراج، ولا يأتي مع صور محمية.
 
 ### طريقة التثبيت
 
-**Claude Code (على جهازك — الخيار الموصى به):**
+**Claude Code كإضافة (Plugin) — الأسهل:**
+```bash
+claude plugin marketplace add almadhoob2026/arabic-brand-carousel
+claude plugin install arabic-brand-carousel@almadhoob2026
+```
+أعد تشغيل Claude Code. عند أول استخدام تُثبَّت المتطلبات تلقائيًا عبر `scripts/setup.sh`. الأوامر المتاحة:
+- `/carousel <الموضوع>`: كاروسيل كامل من موضوع أو خبر أو رابط.
+- `/carousel-review <deck.json>`: مراجعة كاروسيل موجود وإصلاحه قبل النشر.
+- `/carousel-brand <الشعار> <الاسم>`: ملف هوية قابل لإعادة الاستخدام من شعارك.
+
+**Claude Code بالنسخ المباشر (بديل):**
 ```bash
 git clone https://github.com/almadhoob2026/arabic-brand-carousel.git ~/.claude/skills/arabic-brand-carousel
-cd ~/.claude/skills/arabic-brand-carousel
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m playwright install chromium   # غير ضروري إذا كان Chrome مثبتًا
+bash ~/.claude/skills/arabic-brand-carousel/scripts/setup.sh
 ```
-أعد تشغيل Claude Code، ثم اكتب `/arabic-brand-carousel` أو اطلب: «سوي لي كاروسيل عن ...». وللتثبيت داخل مشروع واحد فقط استخدم `.claude/skills/arabic-brand-carousel` بدل `~/.claude/skills/`.
+يعمل المجلد كإضافة تلقائيًا بنفس الأوامر. استخدم طريقة واحدة فقط من الطريقتين حتى لا تظهر المهارة مرتين.
 
 **تطبيق Claude (الويب/سطح المكتب):** حمّل المستودع كملف ZIP بحيث يكون `SKILL.md` داخل مجلد `arabic-brand-carousel/`، ثم من *Settings → Capabilities → Skills* اختر *Upload skill*. في هذه البيئة قد لا يتوفر Chromium، فتعمل المهارة على التحرير والتصميم وتسلّم ملف JSON/HTML قابلًا للإخراج محليًا.
 
-**التحديث:** `git -C ~/.claude/skills/arabic-brand-carousel pull`
+**التحديث:** `claude plugin update arabic-brand-carousel@almadhoob2026` للإضافة، أو `git -C ~/.claude/skills/arabic-brand-carousel pull` للنسخ المباشر.
 
 ## English
 
@@ -42,14 +54,27 @@ This repository combines a detailed reusable **Arabic carousel skill**, a browse
 
 ## Installation
 
-### Claude Code (recommended)
+### Claude Code plugin (recommended)
+```bash
+claude plugin marketplace add almadhoob2026/arabic-brand-carousel
+claude plugin install arabic-brand-carousel@almadhoob2026
+```
+Restart Claude Code. Dependencies are installed on first use by `scripts/setup.sh` (into `.venv` inside the plugin). Commands:
+
+| Command | Does |
+|---|---|
+| `/carousel <topic, text or link>` | full workflow: brief → copy → layouts → render → audit |
+| `/carousel-review <deck.json>` | critique + render + audit + rubric, fixes after approval |
+| `/carousel-brand <logo> <name>` | reusable brand profile from a logo, with contrast report |
+
+Update with `claude plugin update arabic-brand-carousel@almadhoob2026`.
+
+### Claude Code by cloning (alternative)
 ```bash
 git clone https://github.com/almadhoob2026/arabic-brand-carousel.git ~/.claude/skills/arabic-brand-carousel
-cd ~/.claude/skills/arabic-brand-carousel
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m playwright install chromium   # skip if Chrome/Chromium is installed
+bash ~/.claude/skills/arabic-brand-carousel/scripts/setup.sh
 ```
-Restart Claude Code, then run `/arabic-brand-carousel` or just ask for an Arabic carousel. For a single project, clone into `<project>/.claude/skills/arabic-brand-carousel` instead. Update with `git -C ~/.claude/skills/arabic-brand-carousel pull`.
+The folder loads as a skills-dir plugin with the same commands. Update with `git -C ~/.claude/skills/arabic-brand-carousel pull`. Use one method, not both, or the skill appears twice.
 
 ### Claude apps (web / desktop)
 Zip the repository so that `SKILL.md` sits inside an `arabic-brand-carousel/` folder, then upload it under *Settings → Capabilities → Skills*. Chromium may be unavailable in that sandbox; the skill then delivers the deck JSON/HTML for local rendering.
@@ -70,7 +95,9 @@ python -m pip install -r requirements.txt
 python -m playwright install chromium
 python scripts/render.py examples/demo.json --out output/demo
 python scripts/render.py examples/demo-images.json --out output/demo-images  # photos + logo
-python scripts/render.py examples/demo-layouts.json --out output/demo-layouts  # all 12 layouts
+python scripts/render.py examples/demo-layouts.json --out output/demo-layouts --formats portrait,square,story --pdf
+python scripts/render.py examples/demo-profile.json --out output/demo-profile   # brand profile + publish pack
+python scripts/brand.py init --logo examples/assets/logo.svg --name "علامتي" --out brands/mine.json
 python scripts/audit.py output/demo --deck examples/demo.json
 python -m unittest discover -s tests -v
 ```
@@ -87,6 +114,11 @@ output/demo/
   carousel.zip            # images + source + deck
   deck.json               # copy of input
   geometry.json           # measured layout checks per slide
+  carousel.pdf            # with --pdf: vector PDF (LinkedIn document post)
+  caption.txt             # caption + hashtags, ready to paste
+  alt-text.txt            # alt text per slide
+  publish.json            # the publishing pack as data
+  square/  story/         # with --formats: same files per extra format
   audit.json              # programmatic checks (after audit)
 ```
 
@@ -109,11 +141,21 @@ scripts/critique.py           # preflight critique (v3)
 scripts/taste.py              # design direction + sliders (v3)
 scripts/assets.py             # local image/logo loading and checks
 scripts/layouts.py            # 12 layout families: validation, inference, HTML/CSS
+scripts/formats.py            # portrait / square / story sizes and safe areas
+scripts/publish.py            # caption, hashtags, alt text
+scripts/brand.py              # brand profiles + palette from logo (CLI: init)
+scripts/setup.sh              # one-time .venv + dependencies
+scripts/eval_triggers.py      # trigger eval runner (uses the claude CLI)
+.claude-plugin/               # plugin.json + marketplace.json
+commands/                     # /carousel, /carousel-review, /carousel-brand
+evals/triggers.json           # should / should-not trigger prompts
 fonts/                        # Cairo variable font + OFL licence
 editor/index.html             # offline visual editor (beta)
 examples/demo.json            # text-only sample
 examples/demo-images.json     # photos + logo sample (assets/ are generated, rights-free)
 examples/demo-layouts.json    # one slide per v4 layout
+examples/demo-profile.json    # brand_profile + formats + publish pack
+examples/brands/sample.json   # sample profile made with scripts/brand.py
 tests/
 .github/workflows/ci.yml
 ```

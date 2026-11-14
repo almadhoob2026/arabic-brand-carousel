@@ -1,0 +1,22 @@
+{
+  "skill": "arabic-brand-carousel",
+  "note": "should_trigger=true prompts must make Claude invoke the skill; false ones must not. Run with scripts/eval_triggers.py.",
+  "cases": [
+    {"id": "ar-msa-topic", "should_trigger": true, "prompt": "صمم كاروسيل انستقرام عن فوائد القراءة اليومية لحساب مكتبة عامة"},
+    {"id": "ar-gulf-dialect", "should_trigger": true, "prompt": "سوي لي كاروسيل عن أهم نصايح المقابلة الوظيفية لحسابي"},
+    {"id": "ar-news-convert", "should_trigger": true, "prompt": "حوّل هذا الخبر إلى شرائح انستقرام: أطلقت البلدية برنامجًا لزراعة ألف شجرة في الأحياء السكنية خلال الشتاء."},
+    {"id": "ar-slides-post", "should_trigger": true, "prompt": "ابي بوست سلايدات عربي بهوية شركتي عن خطوات فتح حساب بنكي"},
+    {"id": "ar-story", "should_trigger": true, "prompt": "اعمل ستوري وكاروسيل بنفس التصميم عن نصائح توفير الكهرباء في الصيف"},
+    {"id": "ar-linkedin-pdf", "should_trigger": true, "prompt": "أبي كاروسيل PDF لينكدإن بالعربي عن مهارات القيادة"},
+    {"id": "en-arabic-carousel", "should_trigger": true, "prompt": "Create an Arabic Instagram carousel for my bakery brand about our new date cookies"},
+    {"id": "ar-review-deck", "should_trigger": true, "prompt": "راجع تصميم الكاروسيل العربي هذا وقل لي وش أعدل قبل النشر: deck.json"},
+    {"id": "ar-brand-logo", "should_trigger": true, "prompt": "عندي شعار شركتي، أبي أطلع منه ألوان هوية وأسوي فيها كاروسيل عربي"},
+    {"id": "ar-comparison", "should_trigger": true, "prompt": "سوي شرائح مقارنة بين الإيجار والتمليك لحساب عقاري"},
+    {"id": "neg-translate", "should_trigger": false, "prompt": "ترجم هذه الجملة إلى الإنجليزية: الوقت كالسيف إن لم تقطعه قطعك"},
+    {"id": "neg-email", "should_trigger": false, "prompt": "اكتب لي إيميل اعتذار رسمي لعميل عن تأخر الطلب"},
+    {"id": "neg-excel", "should_trigger": false, "prompt": "سوي لي جدول إكسل لميزانية البيت الشهرية"},
+    {"id": "neg-english-deck", "should_trigger": false, "prompt": "Make me a PowerPoint deck in English about Q3 sales results"},
+    {"id": "neg-code", "should_trigger": false, "prompt": "اشرح لي الفرق بين list و tuple في بايثون"},
+    {"id": "neg-poem", "should_trigger": false, "prompt": "اكتب لي بيتين شعر عن البحر"}
+  ]
+}

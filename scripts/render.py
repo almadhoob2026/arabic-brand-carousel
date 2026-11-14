@@ -15,6 +15,9 @@ from playwright.sync_api import sync_playwright
 from taste import taste_profile, css_tokens
 from assets import (check_reference, deck_assets, IMAGE_LAYOUTS, IMAGE_FITS, IMAGE_RIGHTS)
 from layouts import validate_fields, infer_kind, content_html, LAYOUT_CSS
+from formats import FORMATS, parse_formats
+from publish import validate_publish, validate_slide_alt, write_pack
+from brand import merge_profile
 from functools import lru_cache
 
 W, H = 1080, 1350
@@ -32,6 +35,8 @@ MAX_HEADLINE_LINES = 4
 
 def load_deck(path):
     obj = json.loads(Path(path).read_text(encoding='utf-8'))
+    if isinstance(obj, dict):
+        obj = merge_profile(obj, path)
     if not isinstance(obj, dict) or not isinstance(obj.get('brand'), dict):
         raise ValueError('Deck must contain a brand object')
     slides = obj.get('slides')
@@ -56,6 +61,11 @@ def load_deck(path):
         if s.get('image') is not None:
             validate_image(s['image'], f'Slide {i} image')
         validate_fields(s, i)
+        validate_slide_alt(s, i)
+    if obj.get('publish') is not None:
+        validate_publish(obj['publish'])
+    if obj.get('formats') is not None:
+        parse_formats(obj['formats'])
     if obj['brand'].get('logo') is not None:
         check_reference(obj['brand']['logo'], 'brand.logo')
     if obj['brand'].get('font_file') is not None:
@@ -148,7 +158,7 @@ def font_faces(font_stack, font_path=None):
     return '\n'.join(rules)
 
 
-def make_html(deck, assets=None):
+def make_html(deck, assets=None, fmt='portrait'):
     """assets: output of assets.deck_assets(); omitted → images are not embedded."""
     b = deck['brand']
     colors = {k:b.get(k, v) for k,v in PALETTE.items()}
@@ -162,7 +172,10 @@ def make_html(deck, assets=None):
     faces = font_faces(font, font_path)
     taste = taste_profile(deck)
     # css_tokens() keys already start with '--'; palette keys do not. Normalize to one prefix.
-    stylevars = ';'.join(f'--{k.lstrip("-")}:{v}' for k,v in {**colors, **css_tokens(taste)}.items())
+    spec = FORMATS[fmt]
+    tokens = css_tokens(taste)
+    tokens['--headline-scale'] = f"{float(tokens['--headline-scale']) * spec['scale']:.3f}"
+    stylevars = ';'.join(f'--{k.lstrip("-")}:{v}' for k,v in {**colors, **tokens}.items())
     assets = {'logo': None, 'slides': [None] * len(deck['slides']), **(assets or {})}
     slides = '\n'.join(make_slide(s, i, len(deck['slides']), b, assets['slides'][i-1], assets['logo'])
                        for i,s in enumerate(deck['slides'],1))
@@ -210,9 +223,10 @@ def make_html(deck, assets=None):
     .orb{width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0,transparent 70%);top:300px;left:-240px;filter:blur(70px)}
     .rings{width:600px;height:600px;border:8px solid var(--accent);border-radius:50%;left:-270px;top:410px;box-shadow:0 0 0 60px var(--background),0 0 0 70px var(--accent);opacity:.12}
     .dots{left:28px;top:400px;width:300px;height:480px;background-image:radial-gradient(var(--accent) 4px,transparent 5px);background-size:34px 34px;opacity:.18}
-    '''+LAYOUT_CSS+'''
-    @media print{.slide{page-break-after:always;margin:0}body{background:white}}
-    </style></head><body>'''+slides+'''</body></html>'''
+    '''+LAYOUT_CSS+spec['css']+'''
+    @page{size:'''+f"{spec['size'][0]}px {spec['size'][1]}px"+''';margin:0}
+    @media print{.slide{margin:0;break-after:page}.slide:last-child{break-after:auto}body{background:white}}
+    </style></head><body class="fmt-'''+fmt+'''">'''+slides+'''</body></html>'''
 
 
 def copy_assets(deck, assets, dest):
@@ -247,7 +261,7 @@ GEOMETRY_JS = '''(el, cfg) => {
   const overflow = () => content.scrollHeight > content.clientHeight + 2 || content.scrollWidth > content.clientWidth + 2;
   let ratio = 1;
   while (overflow() && ratio > 0.64) { ratio -= 0.03; fits.forEach((f, i) => f.style.fontSize = (base[i] * ratio) + 'px'); }
-  const box = el.getBoundingClientRect(), W = box.width, H = box.height, S = cfg.safe;
+  const box = el.getBoundingClientRect(), W = box.width, H = box.height, S = cfg.side, T = cfg.top, B = cfg.bottom;
   const groups = {}; let minFont = 1e9, minFontText = '';
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), range = document.createRange();
   for (let n = walker.nextNode(); n; n = walker.nextNode()) {
@@ -266,7 +280,7 @@ GEOMETRY_JS = '''(el, cfg) => {
   const issues = [];
   for (const [g, rects] of Object.entries(groups)) {
     if (g === 'credit') continue;
-    const bad = rects.find(r => r.x < S || r.y < S || r.x + r.w > W - S || r.y + r.h > H - S);
+    const bad = rects.find(r => r.x < S || r.y < T || r.x + r.w > W - S || r.y + r.h > H - B);
     if (bad) issues.push({code: 'outside-safe-area', group: g, at: [Math.round(bad.x), Math.round(bad.y)]});
   }
   const names = ['topbar', 'content', 'source', 'footer'];
@@ -308,62 +322,90 @@ def browser_executable():
     return None
 
 
-def render(deck_path, outdir):
-    deck=load_deck(deck_path)
-    assets=deck_assets(deck, Path(deck_path).parent)
-    dest=Path(outdir)
-    dest.mkdir(parents=True,exist_ok=True)
-    markup=make_html(deck, assets)
-    (dest/'carousel.html').write_text(markup,encoding='utf-8')
-    portable=copy_assets(deck, assets, dest)
-    (dest/'deck.json').write_text(json.dumps(portable,ensure_ascii=False,indent=2),encoding='utf-8')
-    pngs=[]
-    with sync_playwright() as p:
-        args={'headless':True}
-        executable=browser_executable()
-        if executable: args['executable_path']=executable
-        browser=p.chromium.launch(**args)
-        page=browser.new_page(viewport={'width':W,'height':H},device_scale_factor=1)
-        page.set_content(markup,wait_until='load')
-        page.evaluate('document.fonts.ready')
-        geometry=[]
-        for i in range(len(deck['slides'])):
-            slide=page.locator('.slide').nth(i)
-            # Shrink display text (headline, metric, quote) only if the DOM overflows (max 36%),
-            # then measure real glyph boxes for safe-area, overlap and size checks.
-            geo=slide.evaluate(GEOMETRY_JS,{'safe':SAFE_MARGIN})
-            geo['slide']=i+1
-            geometry.append(geo)
-            for issue in geo['issues']:
-                print(f"WARNING: slide {i+1}: {issue['code']} ({issue['group']})")
-            out=dest/f'slide-{i+1:02d}.png'
-            slide.screenshot(path=str(out),animations='disabled')
-            pngs.append(out)
-        browser.close()
-    (dest/'geometry.json').write_text(json.dumps({'safe_margin':SAFE_MARGIN,'min_font_px':MIN_FONT_PX,
-        'max_headline_lines':MAX_HEADLINE_LINES,'slides':geometry},ensure_ascii=False,indent=2),encoding='utf-8')
-    # Montage with scaled images; native files remain untouched.
-    thumb_w=270
-    thumb_h=338
-    cols=3
-    rows=(len(pngs)+cols-1)//cols
-    gap=24
-    montage=Image.new('RGB',(cols*thumb_w+(cols+1)*gap,rows*thumb_h+(rows+1)*gap),'#e9ecef')
+def contact_sheet(pngs, size, out):
+    """Scaled overview of all slides; native files remain untouched."""
+    thumb_w = 270
+    thumb_h = round(thumb_w * size[1] / size[0])
+    cols, gap = 3, 24
+    rows = (len(pngs) + cols - 1) // cols
+    montage = Image.new('RGB', (cols * thumb_w + (cols + 1) * gap, rows * thumb_h + (rows + 1) * gap), '#e9ecef')
     for i, f in enumerate(pngs):
         with Image.open(f) as im:
-            im=ImageOps.fit(im.convert('RGB'),(thumb_w,thumb_h))
-            montage.paste(im,(gap+(i%cols)*(thumb_w+gap),gap+(i//cols)*(thumb_h+gap)))
-    montage.save(dest/'contact-sheet.png')
-    with zipfile.ZipFile(dest/'carousel.zip','w',zipfile.ZIP_DEFLATED) as archive:
-        for f in pngs+[dest/'carousel.html',dest/'deck.json',dest/'contact-sheet.png']:
-            archive.write(f,arcname=f.name)
+            im = ImageOps.fit(im.convert('RGB'), (thumb_w, thumb_h))
+            montage.paste(im, (gap + (i % cols) * (thumb_w + gap), gap + (i // cols) * (thumb_h + gap)))
+    montage.save(out)
+
+
+def render_format(browser, deck, assets, dest, fmt, pdf):
+    spec = FORMATS[fmt]
+    w, h = spec['size']
+    dest.mkdir(parents=True, exist_ok=True)
+    markup = make_html(deck, assets, fmt)
+    (dest/'carousel.html').write_text(markup, encoding='utf-8')
+    portable = copy_assets(deck, assets, dest)
+    (dest/'deck.json').write_text(json.dumps(portable, ensure_ascii=False, indent=2), encoding='utf-8')
+    page = browser.new_page(viewport={'width': w, 'height': h}, device_scale_factor=1)
+    page.set_content(markup, wait_until='load')
+    page.evaluate('document.fonts.ready')
+    pngs, geometry = [], []
+    for i in range(len(deck['slides'])):
+        slide = page.locator('.slide').nth(i)
+        # Shrink display text (headline, metric, quote) only if the DOM overflows (max 36%),
+        # then measure real glyph boxes for safe-area, overlap and size checks.
+        geo = slide.evaluate(GEOMETRY_JS, spec['safe'])
+        geo['slide'] = i + 1
+        geometry.append(geo)
+        for issue in geo['issues']:
+            print(f"WARNING: {fmt} slide {i+1}: {issue['code']} ({issue['group']})")
+        out = dest/f'slide-{i+1:02d}.png'
+        slide.screenshot(path=str(out), animations='disabled')
+        pngs.append(out)
+    if pdf:  # vector PDF with real, searchable text; same DOM as the PNGs (after fitting)
+        page.pdf(path=str(dest/'carousel.pdf'), width=f'{w}px', height=f'{h}px',
+                 print_background=True, prefer_css_page_size=True,
+                 margin={'top': '0', 'right': '0', 'bottom': '0', 'left': '0'})
+    page.close()
+    (dest/'geometry.json').write_text(json.dumps({
+        'format': fmt, 'size': [w, h], 'safe_area': spec['safe'], 'min_font_px': MIN_FONT_PX,
+        'max_headline_lines': MAX_HEADLINE_LINES, 'slides': geometry}, ensure_ascii=False, indent=2), encoding='utf-8')
+    contact_sheet(pngs, (w, h), dest/'contact-sheet.png')
+    write_pack(deck, dest)
+    extras = [dest/n for n in ('carousel.html', 'deck.json', 'contact-sheet.png', 'carousel.pdf',
+                               'caption.txt', 'alt-text.txt', 'publish.json') if (dest/n).exists()]
+    with zipfile.ZipFile(dest/'carousel.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+        for f in pngs + extras:
+            archive.write(f, arcname=f.name)
         for f in sorted((dest/'assets').glob('*')) if (dest/'assets').is_dir() else []:
-            archive.write(f,arcname=f'assets/{f.name}')
-    print(f'Rendered {len(pngs)} slides to {dest}')
+            archive.write(f, arcname=f'assets/{f.name}')
+    print(f'Rendered {len(pngs)} {fmt} slides ({w}x{h}) to {dest}')
+    return dest
+
+
+def render(deck_path, outdir, formats=None, pdf=False):
+    """Render each format: portrait into outdir, others into outdir/<format>/."""
+    deck = load_deck(deck_path)
+    fmts = parse_formats(formats if formats is not None else deck.get('formats'))
+    assets = deck_assets(deck, Path(deck_path).parent)
+    root = Path(outdir)
+    outputs = []
+    with sync_playwright() as p:
+        args = {'headless': True}
+        executable = browser_executable()
+        if executable:
+            args['executable_path'] = executable
+        browser = p.chromium.launch(**args)
+        for fmt in fmts:
+            folder = FORMATS[fmt]['folder']
+            outputs.append(render_format(browser, deck, assets, root/folder if folder else root, fmt, pdf))
+        browser.close()
+    return outputs
+
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('deck',help='UTF-8 deck JSON')
     ap.add_argument('--out',default='output/carousel')
+    ap.add_argument('--formats',help='comma list: portrait,square,story (default: deck "formats" or portrait)')
+    ap.add_argument('--pdf',action='store_true',help='also write carousel.pdf (vector text; LinkedIn document posts)')
     args=ap.parse_args()
-    render(args.deck,args.out)
+    render(args.deck,args.out,args.formats,args.pdf)
