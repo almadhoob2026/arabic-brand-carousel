@@ -1,0 +1,78 @@
+---
+name: arabic-brand-carousel
+description: >-
+  Plan, write, design, render and audit a branded Arabic RTL Instagram carousel
+  from a topic or brief. Use for Arabic social media carousel requests involving
+  content strategy, slide storytelling, typography, visual consistency, or export.
+  Supports 1080x1350 PNG slides, editable HTML and accessible review previews.
+---
+
+# Arabic Brand Carousel — production workflow (v2.0)
+
+## Mission
+Turn the user's topic into a concise, accurate, visually consistent Arabic carousel. Act as an editor, designer, Arabic typesetter and QA reviewer. The deliverable is not only a list of slide captions: it is a rendered and checked collection of assets plus an editable source.
+
+## Operating principles
+1. **Reuse context first.** Infer brand, audience, dialect and preferred style from provided references. Ask at most one compact question only if a truly essential detail is missing. When no identity is supplied, use a clearly declared neutral identity (near-black / warm white / one accent); never fabricate the client's logo.
+2. **Default to Modern Standard Arabic** for institutions and professional accounts; match the user's dialect for informal brands when requested or clearly established. Avoid mixing registers accidentally.
+3. **Content before aesthetics.** Choose the smallest slide count that tells the story. Default 7; typically 5–8, maximum 10 unless requested. No padding/filler slides.
+4. **Do not hallucinate evidence.** Verify time-sensitive data against credible sources when browsing is available. Put concise source labels or citations on relevant slides and provide full references in an accompanying note. If verification is unavailable, remove numerical claims or label them as unverified rather than inventing sources.
+5. **Source and permission safety.** Use brand assets and photographs supplied/licensed by the user or explicitly approved/generated visuals. Do not download, embed, or redistribute unauthorized fonts or imagery. Never claim a supplied design is unchanged if it was modified.
+6. **Respect platform and system constraints.** Follow the host environment's tool rules. Prefer image-generation tools for requested visual creations when the host requires them; this repository's browser renderer is an optional deterministic implementation, not a way to bypass tool restrictions.
+
+## Stage 1 — Intake and brand memory
+Extract a structured brief with: topic, takeaway, objective (awareness/education/leads/announcement), audience, tone/register, CTA, constraints, brand name/handle/logo, color palette, assets, citations and target platform. Infer what is known. Ask only for a missing logo/wordmark and palette when meaningful brand fidelity cannot otherwise be achieved; proceed with declared defaults if the user prefers. Never ask users to choose font or layout unless they ask.
+
+Brand tokens: background, foreground, accent, muted, surface, font family, safe zones, typography scale, highlight style, image treatment, category label and brand mark placement. Inspect references for these. If brand guidance conflicts with the default template, brand guidance wins unless it compromises readability or safety.
+
+## Stage 2 — Research, editorial strategy and fact control
+Write privately before layout: (a) one-sentence promise; (b) audience pain point; (c) distinctive editorial angle; (d) hierarchy of supporting claims; (e) desired reader action.
+
+Choose a narrative arc deliberately: hook → context → explanation → demonstration → useful takeaway → CTA. Other valid arcs include myth/fact, problem/solution, before/after, comparison, checklist, timeline, story, and practical how-to. The hook must make sense on its own. Every middle slide must contribute one new idea. The last slide contains one clear and relevant CTA; do not automatically add engagement bait.
+
+Maintain a claim ledger for numerical, scientific, legal, financial and historical facts: claim, source URL/title, source date, verification status and destination slide. Distinguish verified facts, opinion, examples and illustrative data. High-stakes claims need stronger verification and neutral wording. Refer to `references/editorial.md`.
+
+## Stage 3 — Slide script
+Construct an outline, then write exact copy. Slide 1: 1 arresting idea + clear subject; slides 2–N−1: 1 core idea each; final: 1 CTA + brand mark. Default target ≤35 Arabic words/slide (hard editorial target 40, exceptions for citations). Keep 1–2 short supporting lines rather than paragraphs. A word count is not a spatial fit test. Avoid arbitrary sentence splitting, excessive punctuation, or unattributed quotes.
+
+Use varied, purposeful compositions: hero statement, numbered steps, side-by-side comparison, metric focus, annotated diagram, before/after, list or mini case study. Do not repeat the same interior composition more than twice in a row. Reserve enough whitespace to make the headline dominant. Headlines should normally fit 2–4 lines; rewrite before shrinking. Never sacrifice Arabic legibility for decorative effects.
+
+## Stage 4 — Layout & type system
+Default Instagram portrait canvas: **1080×1350 px**. RTL direction. Default safe area ≥80 px around edges, with additional reserve for a persistent brand bar. Repeat counter (upper left), category tag (upper right), brand mark (lower left), swipe cue (lower right except final). Adapt these positions only when brand assets or visual hierarchy require it.
+
+Typography is responsive: initial headline range ~76–124 px; supporting text ~38–52 px; small labels ~26–36 px. These are *starting values*, not fixed absolutes. The headline's width, line breaks, and physical bounds determine size. Do not reduce supporting copy below readable mobile scale just to fit more words. Use Cairo if locally available/licensed, otherwise an appropriate Arabic fallback; never rely on network font downloads. Carefully test Arabic joining, diacritics, Arabic-Indic digits, parentheses, mixed Latin segments, RTL alignment and punctuation.
+
+Color: WCAG-inspired strong contrast for text. Limit to one dominant accent plus semantic exceptions. Use deliberate highlights, not a mandatory underline on every slide. Illustrations and shapes reinforce meaning and stay behind text. Respect user's 'no frames' preference when present. Photos are only used when permitted by the user and are not sourced from search without appropriate rights.
+
+## Stage 5 — Production
+The repository's example implementation accepts a JSON slide deck and creates one editable HTML file, individual PNG files and a contact sheet. See `README.md` and `examples/demo.json`. When using it:
+
+```bash
+python -m pip install -r requirements.txt
+python scripts/render.py examples/demo.json --out output/demo
+python scripts/audit.py output/demo --deck examples/demo.json
+```
+
+If dependencies or browser are unavailable, report the limitation and supply a complete edit-ready deck/source instead of claiming renders exist. Render at native 1080×1350; do not upscale an image preview and pretend it is native resolution. Avoid remote scripts/fonts/images in the deterministic renderer.
+
+## Stage 6 — Multi-gate QA (mandatory)
+1. **Editorial:** coherent arc, clear hook, no duplicate slides, useful CTA, claim ledger reviewed.
+2. **Arabic:** spelling/hamza/grammar/register, RTL, digits, glyph joining, line breaks and Latin text.
+3. **Visual:** verify actual PNG, not just source; no clipping or overlap, safe-area consistency, readable hierarchy, contrast and aligned brand bars.
+4. **Technical:** files exist, correct dimensions, correct slide ordering/count, no broken local assets, valid HTML and reproducibility.
+5. **Accessibility:** legible at phone size, no information conveyed only via color, meaningful alt text in published descriptions if images carry factual content.
+
+Open every rendered slide and the complete contact sheet. Iterate when any blocking fault occurs. Score against the 100-point rubric in `references/qa-rubric.md`, stating each deduction and its fix. A score below 90 means revise and recheck, not claim acceptance. The scoring is a human/editorial estimate, not automated proof of quality. Automated checks are supporting evidence only.
+
+## Stage 7 — Delivery and revisions
+Provide: PNG slides, a compact montage/contact sheet, editable HTML, deck JSON and optionally a ZIP. Explain the cover/story choice in 1–2 sentences. Keep iterations and original source, and ask for specific approval only where the user workflow calls for it. Clearly separate **review draft** from **approved final**; do not publish to accounts or external sites without authorization and an appropriate connected integration.
+
+## Reference files
+- `references/editorial.md`: content strategy and fact checking
+- `references/design-system.md`: detailed layout and RTL rules
+- `references/qa-rubric.md`: measurable 100-point review criteria
+- `references/schema.md`: input and output contract
+- `examples/demo.json`: runnable sample deck
+
+## Definition of done
+A carousel is done when its story stands on its own, source claims are accounted for, all images are visually reviewed, no critical text is clipped, its identity stays consistent and the editable sources accompany the images.
