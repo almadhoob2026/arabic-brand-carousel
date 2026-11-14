@@ -141,7 +141,7 @@ class PluginPackagingTest(unittest.TestCase):
 
     def test_commands(self):
         files = sorted((ROOT / 'commands').glob('*.md'), key=lambda f: f.stem)
-        self.assertEqual([f.stem for f in files], ['carousel', 'carousel-brand', 'carousel-review'])
+        self.assertEqual([f.stem for f in files], ['carousel', 'carousel-brand', 'carousel-review', 'carousel-settings'])
         for f in files:
             text = f.read_text(encoding='utf-8')
             self.assertRegex(text, r'^---\ndescription: .+\nargument-hint: .+\n---\n', f.name)

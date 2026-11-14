@@ -30,12 +30,6 @@ def audit_folder(dest, deck):
         with Image.open(file) as im:
             if im.size != size:
                 errors.append(f'{file.name}: incorrect size {im.size}, expected {size}')
-        if fmt == 'portrait':  # copy checks are format independent; report them once
-            words = len(slide_text(slide).split())
-            if words > 40:
-                warnings.append(f'Slide {i}: {words} words; editorial target is <=40')
-            if len(slide['headline']) > 78:
-                warnings.append(f'Slide {i}: long headline; inspect mobile readability')
     if geo:
         for g in geo['slides']:
             for issue in g['issues']:
@@ -61,14 +55,36 @@ def audit_folder(dest, deck):
     return fmt, {'passed': not errors, 'format': fmt, 'size': list(size), 'errors': errors, 'warnings': warnings}
 
 
+def copy_warnings(deck):
+    """Format-independent copy checks, reported once per deck."""
+    out = []
+    for i, slide in enumerate(deck['slides'], 1):
+        words = len(slide_text(slide).split())
+        if words > 40:
+            out.append(f'Slide {i}: {words} words; editorial target is <=40')
+        if len(slide['headline']) > 78:
+            out.append(f'Slide {i}: long headline; inspect mobile readability')
+    return out
+
+
+def rendered_folders(root):
+    """Folders produced by the last render (render.json), else whatever exists."""
+    manifest = root/'render.json'
+    if manifest.exists():
+        data = json.loads(manifest.read_text(encoding='utf-8'))
+        return [root if sub == '.' else root/sub for sub in data['formats'].values()]
+    return [root] + [root/f['folder'] for f in FORMATS.values()
+                     if f['folder'] and (root/f['folder']/'geometry.json').exists()]
+
+
 def audit(folder, deck_path):
     root = Path(folder)
     deck = load_deck(deck_path)
-    folders = [root] + [root/f['folder'] for f in FORMATS.values()
-                        if f['folder'] and (root/f['folder']/'geometry.json').exists()]
+    shared = copy_warnings(deck)
     results = {}
-    for dest in folders:
+    for dest in rendered_folders(root):
         fmt, report = audit_folder(dest, deck)
+        report['warnings'] = shared + report['warnings']
         report['requires_manual_review'] = [
             'Inspect each PNG for clipped elements or overlap',
             'Proofread Arabic glyphs, punctuation and bidi text',

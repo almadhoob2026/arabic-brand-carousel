@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "arabic-brand-carousel",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Plan, write, design, render and audit branded Arabic RTL carousels: 12 layouts, images and logo, portrait/square/story, LinkedIn PDF and a publishing pack.",
   "author": {
     "name": "almadhoob2026",
