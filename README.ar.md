@@ -1,4 +1,4 @@
-# مهارة الكاروسيل العربي للعلامات التجارية — الإصدار 2.0
+# مهارة الكاروسيل العربي للعلامات التجارية — الإصدار 3.0
 
 مشروع مفتوح المصدر لإنشاء كاروسيل عربي من موضوع واحد، مع منهج تحرير وتصميم احترافي، ومحرّك محلي لإخراج HTML وPNG بمقاس 1080×1350، وفحوصات تقنية ومراجعة بصرية بشرية.
 
@@ -7,8 +7,24 @@
 - `references/`: دليل التحرير، قواعد التصميم العربي، نموذج JSON، وتقييم الجودة.
 - `scripts/render.py`: يحوّل ملف JSON إلى HTML وصور PNG وصورة معاينة وZIP.
 - `scripts/audit.py`: يتحقق من المقاسات والعدد والملفات ويصدر `audit.json`.
+- `scripts/critique.py` و`scripts/taste.py`: فحص مبدئي وتوجهات التصميم (الإصدار 3).
 - `examples/demo.json`: مثال عربي من سبع شرائح.
 - `tests/`: اختبارات صحة البيانات وأمان إدراج النصوص.
+
+## طريقة التثبيت
+
+**Claude Code (على جهازك — الخيار الموصى به):**
+```bash
+git clone https://github.com/almadhoob2026/arabic-brand-carousel.git ~/.claude/skills/arabic-brand-carousel
+cd ~/.claude/skills/arabic-brand-carousel
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+.venv/bin/python -m playwright install chromium   # غير ضروري إذا كان Chrome مثبتًا
+```
+أعد تشغيل Claude Code، ثم اكتب `/arabic-brand-carousel` أو اطلب: «سوي لي كاروسيل عن ...». وللتثبيت داخل مشروع واحد فقط استخدم `.claude/skills/arabic-brand-carousel` بدل `~/.claude/skills/`.
+
+**تطبيق Claude (الويب/سطح المكتب):** حمّل المستودع كملف ZIP بحيث يكون `SKILL.md` داخل مجلد `arabic-brand-carousel/`، ثم من *Settings → Capabilities → Skills* اختر *Upload skill*. في هذه البيئة قد لا يتوفر Chromium، فتعمل المهارة على التحرير والتصميم وتسلّم ملف JSON/HTML قابلًا للإخراج محليًا.
+
+**التحديث:** `git -C ~/.claude/skills/arabic-brand-carousel pull`
 
 ## التشغيل
 ```bash

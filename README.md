@@ -2,7 +2,7 @@
 
 **A production-oriented AI skill and open-source RTL carousel renderer for Arabic Instagram posts.**
 
-[العربية](#بالعربية) · [English](#english) · [Quick start](#quick-start)
+[العربية](#بالعربية) · [English](#english) · [Installation](#installation) · [Quick start](#quick-start)
 
 ## بالعربية
 
@@ -17,12 +17,41 @@
 - اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
 - لا يحتاج إلى اتصال خارجي وقت الإخراج، ولا يأتي مع خطوط أو صور محمية.
 
-### طريقة استخدام المهارة
-انسخ `SKILL.md` والمجلد `references/` إلى موقع المهارات لدى مساعدك أو ارفع المستودع كمرجع. اطلب: «صمم كاروسيل عربي عن ... لعلامتي التجارية ...». تختلف طريقة تثبيت المهارات باختلاف التطبيق، وهذا المستودع لا يدّعي توافقًا آليًا مع جميع المنتجات.
+### طريقة التثبيت
+
+**Claude Code (على جهازك — الخيار الموصى به):**
+```bash
+git clone https://github.com/almadhoob2026/arabic-brand-carousel.git ~/.claude/skills/arabic-brand-carousel
+cd ~/.claude/skills/arabic-brand-carousel
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+.venv/bin/python -m playwright install chromium   # غير ضروري إذا كان Chrome مثبتًا
+```
+أعد تشغيل Claude Code، ثم اكتب `/arabic-brand-carousel` أو اطلب: «سوي لي كاروسيل عن ...». وللتثبيت داخل مشروع واحد فقط استخدم `.claude/skills/arabic-brand-carousel` بدل `~/.claude/skills/`.
+
+**تطبيق Claude (الويب/سطح المكتب):** حمّل المستودع كملف ZIP بحيث يكون `SKILL.md` داخل مجلد `arabic-brand-carousel/`، ثم من *Settings → Capabilities → Skills* اختر *Upload skill*. في هذه البيئة قد لا يتوفر Chromium، فتعمل المهارة على التحرير والتصميم وتسلّم ملف JSON/HTML قابلًا للإخراج محليًا.
+
+**التحديث:** `git -C ~/.claude/skills/arabic-brand-carousel pull`
 
 ## English
 
 This repository combines a detailed reusable **Arabic carousel skill**, a browser-based visual editor (beta), and a minimal deterministic renderer. It focuses on editorial strategy, brand consistency, RTL typesetting, evidence handling and human-in-the-loop QA. It is an example implementation, **not** an Instagram publishing integration or a general-purpose design editor.
+
+## Installation
+
+### Claude Code (recommended)
+```bash
+git clone https://github.com/almadhoob2026/arabic-brand-carousel.git ~/.claude/skills/arabic-brand-carousel
+cd ~/.claude/skills/arabic-brand-carousel
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+.venv/bin/python -m playwright install chromium   # skip if Chrome/Chromium is installed
+```
+Restart Claude Code, then run `/arabic-brand-carousel` or just ask for an Arabic carousel. For a single project, clone into `<project>/.claude/skills/arabic-brand-carousel` instead. Update with `git -C ~/.claude/skills/arabic-brand-carousel pull`.
+
+### Claude apps (web / desktop)
+Zip the repository so that `SKILL.md` sits inside an `arabic-brand-carousel/` folder, then upload it under *Settings → Capabilities → Skills*. Chromium may be unavailable in that sandbox; the skill then delivers the deck JSON/HTML for local rendering.
+
+### Browser detection
+The renderer uses `CHROME_PATH` if set, otherwise `chromium`/`google-chrome` on `PATH`, then the standard macOS Chrome/Chromium/Edge locations, and finally Playwright's bundled Chromium.
 
 ## Visual editor (beta)
 
@@ -63,17 +92,17 @@ See [`references/schema.md`](references/schema.md) and [`examples/demo.json`](ex
 ## Project structure
 
 ```text
-SKILL.md
-editor/index.html
-editor/README.md
-README.md
-LICENSE
-requirements.txt
-scripts/render.py
-scripts/audit.py
-references/{editorial,design-system,qa-rubric,schema}.md
+SKILL.md                      # skill entry point (name + description frontmatter)
+BRAND.md DESIGN.md EDITORIAL.md   # per-project decision templates
+references/                   # editorial, design-system, qa-rubric, schema,
+                              # taste-engine, visual-directions, anti-patterns, critique-polish
+scripts/render.py             # JSON → HTML + PNG + contact sheet + ZIP
+scripts/audit.py              # technical output checks
+scripts/critique.py           # preflight critique (v3)
+scripts/taste.py              # design direction + sliders (v3)
+editor/index.html             # offline visual editor (beta)
 examples/demo.json
-tests/test_deck.py
+tests/
 .github/workflows/ci.yml
 ```
 

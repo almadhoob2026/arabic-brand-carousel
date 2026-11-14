@@ -5,6 +5,8 @@ description: >-
   from a topic or brief. Use for Arabic social media carousel requests involving
   content strategy, slide storytelling, typography, visual consistency, or export.
   Supports 1080x1350 PNG slides, editable HTML and accessible review previews.
+  Triggers on Arabic requests such as "كاروسيل", "سوي لي كاروسيل", "شرائح انستقرام",
+  "بوست سلايدات" or "حوّل هذا الموضوع إلى كاروسيل".
 ---
 
 # Arabic Brand Carousel — production workflow (v3.0)
@@ -31,11 +33,6 @@ Read `BRAND.md`, `DESIGN.md`, and `EDITORIAL.md` when project-specific copies ex
 
 The five taste dimensions are `design_variance`, `visual_density`, `contrast_level`, `typographic_expression`, and `decoration_level` (integers 1–10). In the deck JSON, use `design.direction` with optional overrides. The default direction is `editorial`; all existing decks without `design` still work. Presets do not replace the brand palette or invent logos. Design tokens affect the deterministic renderer only where implemented and tested; layout advice is not a promise of automated restructuring.
 
-## Stage 5a — Explainable critique and polish (v3)
-Before final export, run `python scripts/critique.py examples/demo.json --out output/critique.json`. It identifies duplicate headlines, overlong content, contrast defects, repetitive decorations, and missing sources on explicit `metric` fields. Review proposed layout families *as suggestions*; respect authored kinds. Read `references/anti-patterns.md` and `references/critique-polish.md` for hard-versus-soft failures, actionable correction, rerendering and visual review. Recheck after each correction.
-
-Never call an automatic score a visually certified design. The report is preflight only; rendered-image review and fact verification remain mandatory. Do not install third-party design skills or scrape their proprietary material to make this work.
-
 ## Stage 2 — Research, editorial strategy and fact control
 Write privately before layout: (a) one-sentence promise; (b) audience pain point; (c) distinctive editorial angle; (d) hierarchy of supporting claims; (e) desired reader action.
 
@@ -56,7 +53,7 @@ Typography is responsive: initial headline range ~76–124 px; supporting text ~
 Color: WCAG-inspired strong contrast for text. Limit to one dominant accent plus semantic exceptions. Use deliberate highlights, not a mandatory underline on every slide. Illustrations and shapes reinforce meaning and stay behind text. Respect user's 'no frames' preference when present. Photos are only used when permitted by the user and are not sourced from search without appropriate rights.
 
 ## Stage 5 — Production
-The repository's example implementation accepts a JSON slide deck and creates one editable HTML file, individual PNG files and a contact sheet. See `README.md` and `examples/demo.json`. When using it:
+Run the scripts from this skill's own directory (the folder containing this `SKILL.md`), or prefix paths with it. The repository's example implementation accepts a JSON slide deck and creates one editable HTML file, individual PNG files and a contact sheet. See `README.md` and `examples/demo.json`. When using it:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -65,6 +62,11 @@ python scripts/audit.py output/demo --deck examples/demo.json
 ```
 
 If dependencies or browser are unavailable, report the limitation and supply a complete edit-ready deck/source instead of claiming renders exist. Render at native 1080×1350; do not upscale an image preview and pretend it is native resolution. Avoid remote scripts/fonts/images in the deterministic renderer.
+
+## Stage 5a — Explainable critique and polish (v3)
+Before final export, run `python scripts/critique.py examples/demo.json --out output/critique.json`. It identifies duplicate headlines, overlong content, contrast defects, repetitive decorations, and missing sources on explicit `metric` fields. Review proposed layout families *as suggestions*; respect authored kinds. Read `references/anti-patterns.md` and `references/critique-polish.md` for hard-versus-soft failures, actionable correction, rerendering and visual review. Recheck after each correction.
+
+Never call an automatic score a visually certified design. The report is preflight only; rendered-image review and fact verification remain mandatory. Do not install third-party design skills or scrape their proprietary material to make this work.
 
 ## Stage 6 — Multi-gate QA (mandatory)
 1. **Editorial:** coherent arc, clear hook, no duplicate slides, useful CTA, claim ledger reviewed.

@@ -73,7 +73,7 @@ def make_slide(slide, idx, n, brand):
       <header class="topbar"><span class="category">{category}</span><span class="counter" dir="ltr">{idx} / {n}</span></header>
       <main class="content"><div class="eyebrow">{eyebrow}</div><h1 class="headline">{title}</h1>{body}{bullets_html}{cta}</main>
       {source}
-      <footer class="footer"><span class="brandmark">{brand_mark}</span>{cue}</footer>
+      <footer class="footer"><span class="brandmark"><bdi>{brand_mark}</bdi></span>{cue}</footer>
     </section>'''
 
 
@@ -85,7 +85,8 @@ def make_html(deck):
     if not isinstance(font, str) or len(font)>160 or not re.fullmatch(r'[\w\s,\-"\']+', font, re.UNICODE):
         raise ValueError('Invalid local font_family')
     taste = taste_profile(deck)
-    stylevars = ';'.join(f'--{k}:{v}' for k,v in {**colors, **css_tokens(taste)}.items())
+    # css_tokens() keys already start with '--'; palette keys do not. Normalize to one prefix.
+    stylevars = ';'.join(f'--{k.lstrip("-")}:{v}' for k,v in {**colors, **css_tokens(taste)}.items())
     slides = '\n'.join(make_slide(s, i, len(deck['slides']), b) for i,s in enumerate(deck['slides'],1))
     return '''<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arabic Brand Carousel</title><style>
     :root{'''+stylevars+';--arabic-font:'+font+'''}
@@ -123,7 +124,17 @@ def browser_executable():
         if not Path(env).exists():
             raise FileNotFoundError(f'CHROME_PATH does not exist: {env}')
         return env
-    return shutil.which('chromium') or shutil.which('chromium-browser') or shutil.which('google-chrome')
+    found = shutil.which('chromium') or shutil.which('chromium-browser') or shutil.which('google-chrome')
+    if found:
+        return found
+    for candidate in (
+        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        '/Applications/Chromium.app/Contents/MacOS/Chromium',
+        '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    ):
+        if Path(candidate).exists():
+            return candidate
+    return None
 
 
 def render(deck_path, outdir):
