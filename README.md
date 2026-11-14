@@ -16,7 +16,10 @@
 - ملف JSON قابل للتعديل، HTML مستقل، PNG لكل شريحة، صورة معاينة مجمعة، وملف ZIP.
 - **محرر مرئي تجريبي يعمل داخل المتصفح**: تعديل العلامة والشرائح، إضافة/نسخ/ترتيب، معاينة وتصدير PNG/JSON دون خادم. [جرّب المحرر](editor/index.html) (حمّل الملف وافتحه محليًا).
 - اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
-- لا يحتاج إلى اتصال خارجي وقت الإخراج، ولا يأتي مع خطوط أو صور محمية.
+- **12 تخطيطًا فعليًا** (الإصدار 4): رقم كبير، مقارنة، قبل وبعد، اقتباس، خط زمني، قائمة تحقق، بطاقات، سؤال وجواب، إلى جانب الغلاف والنص والخطوات والدعوة. يُختار التخطيط تلقائيًا من نوع المحتوى.
+- **خط Cairo مرفق** (رخصة SIL OFL) ويُضمَّن في الملف، مع دعم ملف خط العلامة التجارية.
+- **فحص هندسي فعلي** من المتصفح: الهوامش الآمنة، تداخل النصوص، النص فوق الصور، تجاوز المساحة، عدد أسطر العنوان، وأصغر خط.
+- لا يحتاج إلى اتصال خارجي وقت الإخراج، ولا يأتي مع صور محمية.
 
 ### طريقة التثبيت
 
@@ -60,13 +63,14 @@ Open [`editor/index.html`](editor/index.html) in a modern browser; it supports o
 
 ## Quick start
 
-Requires Python 3.10+, Chromium (or another Playwright-managed Chromium executable), and a local Arabic-compatible font. No font files are bundled.
+Requires Python 3.10+ and Chromium (or another Playwright-managed Chromium executable). The Cairo font is bundled under the SIL Open Font License (`fonts/OFL.txt`).
 
 ```bash
 python -m pip install -r requirements.txt
 python -m playwright install chromium
 python scripts/render.py examples/demo.json --out output/demo
 python scripts/render.py examples/demo-images.json --out output/demo-images  # photos + logo
+python scripts/render.py examples/demo-layouts.json --out output/demo-layouts  # all 12 layouts
 python scripts/audit.py output/demo --deck examples/demo.json
 python -m unittest discover -s tests -v
 ```
@@ -82,6 +86,7 @@ output/demo/
   contact-sheet.png       # combined preview
   carousel.zip            # images + source + deck
   deck.json               # copy of input
+  geometry.json           # measured layout checks per slide
   audit.json              # programmatic checks (after audit)
 ```
 
@@ -103,9 +108,12 @@ scripts/audit.py              # technical output checks
 scripts/critique.py           # preflight critique (v3)
 scripts/taste.py              # design direction + sliders (v3)
 scripts/assets.py             # local image/logo loading and checks
+scripts/layouts.py            # 12 layout families: validation, inference, HTML/CSS
+fonts/                        # Cairo variable font + OFL licence
 editor/index.html             # offline visual editor (beta)
 examples/demo.json            # text-only sample
 examples/demo-images.json     # photos + logo sample (assets/ are generated, rights-free)
+examples/demo-layouts.json    # one slide per v4 layout
 tests/
 .github/workflows/ci.yml
 ```
@@ -120,4 +128,4 @@ Issues, Arabic wording improvements, tests for bidi edge cases and pull requests
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Third-party assets and fonts are **not** covered by this license.
+MIT — see [LICENSE](LICENSE). Third-party assets are **not** covered by this license. The bundled Cairo font in `fonts/` is © The Cairo Project Authors and licensed separately under the SIL Open Font License 1.1 (`fonts/OFL.txt`).
