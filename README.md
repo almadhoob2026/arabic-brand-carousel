@@ -13,6 +13,7 @@
 - خط سير إنتاج كامل من الفكرة إلى الصور، مع ضبط عربي RTL فعلي.
 - محرّك HTML/Chromium محلي لإخراج شرائح 1080×1350.
 - ملف JSON قابل للتعديل، HTML مستقل، PNG لكل شريحة، صورة معاينة مجمعة، وملف ZIP.
+- **محرر مرئي تجريبي يعمل داخل المتصفح**: تعديل العلامة والشرائح، إضافة/نسخ/ترتيب، معاينة وتصدير PNG/JSON دون خادم. [جرّب المحرر](editor/index.html) (حمّل الملف وافتحه محليًا).
 - اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
 - لا يحتاج إلى اتصال خارجي وقت الإخراج، ولا يأتي مع خطوط أو صور محمية.
 
@@ -21,7 +22,11 @@
 
 ## English
 
-This repository combines a detailed reusable **Arabic carousel skill** with a minimal deterministic renderer. It focuses on editorial strategy, brand consistency, RTL typesetting, evidence handling and human-in-the-loop QA. It is an example implementation, **not** an Instagram publishing integration or a general-purpose design editor.
+This repository combines a detailed reusable **Arabic carousel skill**, a browser-based visual editor (beta), and a minimal deterministic renderer. It focuses on editorial strategy, brand consistency, RTL typesetting, evidence handling and human-in-the-loop QA. It is an example implementation, **not** an Instagram publishing integration or a general-purpose design editor.
+
+## Visual editor (beta)
+
+Open [`editor/index.html`](editor/index.html) in a modern browser; it supports offline editing and PNG/JSON exports. See [`editor/README.md`](editor/README.md) for the features and limitations. The Canvas preview is **not pixel-identical** to the production Chromium renderer.
 
 ## Quick start
 
@@ -59,6 +64,8 @@ See [`references/schema.md`](references/schema.md) and [`examples/demo.json`](ex
 
 ```text
 SKILL.md
+editor/index.html
+editor/README.md
 README.md
 LICENSE
 requirements.txt
