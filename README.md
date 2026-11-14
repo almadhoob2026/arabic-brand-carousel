@@ -14,7 +14,7 @@
 - محرّك HTML/Chromium محلي لإخراج شرائح 1080×1350.
 - **دعم الصور والشعار**: صورة خلفية كاملة مع طبقة تعتيم، أو صورة أعلى الشريحة، أو صورة جانبية، وشعار بجانب الحساب. الصور ملفات محلية تُضمَّن داخل الملف، مع فحص التباين والدقة وحقوق الاستخدام.
 - ملف JSON قابل للتعديل، HTML مستقل، PNG لكل شريحة، صورة معاينة مجمعة، وملف ZIP.
-- **محرر مرئي تجريبي يعمل داخل المتصفح**: تعديل العلامة والشرائح، إضافة/نسخ/ترتيب، معاينة وتصدير PNG/JSON دون خادم. [جرّب المحرر](editor/index.html) (حمّل الملف وافتحه محليًا).
+- **محرر مرئي تجريبي يعمل داخل المتصفح**: تعديل العلامة والشرائح، إضافة/نسخ/ترتيب، إرفاق صور وشعار من جهازك (خلفية/أعلى/جانبية)، معاينة وتصدير PNG/JSON دون خادم. [جرّب المحرر](editor/index.html) (حمّل الملف وافتحه محليًا).
 - اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
 - لا يحتاج إلى اتصال خارجي وقت الإخراج، ولا يأتي مع خطوط أو صور محمية.
 
@@ -56,7 +56,7 @@ The renderer uses `CHROME_PATH` if set, otherwise `chromium`/`google-chrome` on 
 
 ## Visual editor (beta)
 
-Open [`editor/index.html`](editor/index.html) in a modern browser; it supports offline editing and PNG/JSON exports. See [`editor/README.md`](editor/README.md) for the features and limitations. The Canvas preview is **not pixel-identical** to the production Chromium renderer.
+Open [`editor/index.html`](editor/index.html) in a modern browser; it supports offline editing, local images and logo (same fields and layouts as the renderer), and PNG/JSON exports. See [`editor/README.md`](editor/README.md) for the features and limitations. The Canvas preview is **not pixel-identical** to the production Chromium renderer.
 
 ## Quick start
 
