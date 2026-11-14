@@ -38,11 +38,15 @@ def taste_profile(deck):
 
 def suggest_layouts(deck):
     """Suggest variant layouts without modifying user-authored content or explicit kinds."""
+    from layouts import infer_kind
     profile = taste_profile(deck)
     slides = deck['slides']
     suggestions = []
     for i, s in enumerate(slides):
-        if i == 0:
+        content_kind = infer_kind({k: v for k, v in s.items() if k != 'kind'}, i + 1, len(slides))
+        if content_kind not in ('cover', 'statement', 'steps', 'cta'):
+            kind = content_kind  # structured content decides the layout
+        elif i == 0:
             kind = 'cover'
         elif i == len(slides) - 1:
             kind = 'cta'

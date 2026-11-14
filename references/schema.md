@@ -1,13 +1,39 @@
 # JSON deck contract (renderer v1)
 
 Root:
-- `brand` (required): `{name, handle?, category?, logo?, background?, foreground?, accent?, muted?, surface?, font_family?}`
-- `slides` (required): 2–10 items, each with `{kind?, eyebrow?, headline, body?, bullets?, source?, cta?, decorative?, image?}`.
-- `kind`: `cover`, `statement`, `steps`, `list`, `cta` (others render using statement layout).
+- `brand` (required): `{name, handle?, category?, logo?, background?, foreground?, accent?, muted?, surface?, font_family?, font_file?}`
+- `slides` (required): 2–10 items, each with `{kind?, eyebrow?, headline, body?, bullets?, source?, cta?, decorative?, image?, metric?, compare?, quote?, timeline?, cards?, answer?}`.
+
+## Layouts (v4)
+
+| Layout (`kind`) | Content field | Use it for |
+|---|---|---|
+| `cover` | — (slide 1 by default) | the hook |
+| `statement` | `body` | one idea with a short explanation |
+| `steps` / `list` | `bullets` (≤5) | numbered actions |
+| `checklist` | `bullets` + `"kind": "checklist"` | pre-flight or verification lists |
+| `metric` | `metric: {value, label?}` + `source` | one striking, sourced number |
+| `comparison` | `compare: {columns: [{title?, points[1–4]}, {…}]}` | two options side by side |
+| `before-after` | `compare` + `"kind": "before-after"` | a transformation (titles default to قبل / بعد) |
+| `quote` | `quote: {text, author?, role?}` | a principle or attributed quote |
+| `timeline` | `timeline: [{label, text}] (2–5)` | stages, history, a process |
+| `grid` | `cards: [{title, text?}] (2–4)` | parallel options or categories |
+| `qa` | `answer` (headline = question) | FAQs and myth-busting |
+| `cta` | `cta` (last slide by default) | the single closing action |
+
+`kind` is optional: when it is omitted the layout is **inferred from the content field** present (`metric` → metric, `compare` → comparison, `quote`, `timeline`, `cards` → grid, `answer` → qa, `bullets` → steps; first slide → cover; last slide with `cta` → cta). An explicit `kind` always wins; unknown legacy kinds render as `statement`. A kind that needs a field (e.g. `metric` without `metric`) is rejected.
 - `bullets`: array of at most 5 short strings. `body`: short supporting prose.
 - `decorative`: `rings`, `dots`, `orb`, or `none`.
 
 Text is treated as plain text (HTML-escaped). Input must not contain remote image/font URLs.
+
+## Fonts
+
+Cairo (SIL Open Font License 1.1, `fonts/OFL.txt`) is bundled in `fonts/` and embedded into `carousel.html` whenever `font_family` mentions Cairo, so output no longer depends on what is installed. To use a licensed brand font, set `brand.font_file` to a local TTF/OTF/WOFF/WOFF2 (≤5 MB); it is embedded as `BrandFont` and placed first in the font stack, and copied to `assets/` in the output.
+
+## Geometry report
+
+`render.py` writes `geometry.json`, measured from real glyph boxes in Chromium: `outside-safe-area` (text within 64 px of an edge), `text-overlap` (between top bar, content, source and footer), `text-over-image` (top/side layouts), `content-overflow`, plus `headline_lines`, `min_font_px` and how much display text was shrunk to fit. `audit.py` treats issues as errors and flags headlines over 4 lines, text under 22 px and shrinking over 15% as warnings.
 
 ## Images and logo
 

@@ -9,7 +9,7 @@ description: >-
   "بوست سلايدات" or "حوّل هذا الموضوع إلى كاروسيل".
 ---
 
-# Arabic Brand Carousel — production workflow (v3.0)
+# Arabic Brand Carousel — production workflow (v4.0)
 
 ## Mission
 Turn the user's topic into a concise, accurate, visually consistent Arabic carousel. Act as an editor, designer, Arabic typesetter and QA reviewer. The deliverable is not only a list of slide captions: it is a rendered and checked collection of assets plus an editable source.
@@ -43,12 +43,12 @@ Maintain a claim ledger for numerical, scientific, legal, financial and historic
 ## Stage 3 — Slide script
 Construct an outline, then write exact copy. Slide 1: 1 arresting idea + clear subject; slides 2–N−1: 1 core idea each; final: 1 CTA + brand mark. Default target ≤35 Arabic words/slide (hard editorial target 40, exceptions for citations). Keep 1–2 short supporting lines rather than paragraphs. A word count is not a spatial fit test. Avoid arbitrary sentence splitting, excessive punctuation, or unattributed quotes.
 
-Use varied, purposeful compositions: hero statement, numbered steps, side-by-side comparison, metric focus, annotated diagram, before/after, list or mini case study. Do not repeat the same interior composition more than twice in a row. Reserve enough whitespace to make the headline dominant. Headlines should normally fit 2–4 lines; rewrite before shrinking. Never sacrifice Arabic legibility for decorative effects.
+Use varied, purposeful compositions. The renderer has real layouts for each, driven by structured fields (full table in `references/schema.md`): `metric` for one sourced number, `compare` for two options (or `"kind": "before-after"` for a change), `quote`, `timeline` for stages, `cards` for 2–4 parallel ideas, `answer` for a Q&A slide, `bullets` for steps or `"kind": "checklist"`. Put the copy into the matching field and omit `kind` to let the layout be inferred. Do not repeat the same interior layout more than twice in a row. Reserve enough whitespace to make the headline dominant. Headlines should normally fit 2–4 lines; rewrite before shrinking. Never sacrifice Arabic legibility for decorative effects.
 
 ## Stage 4 — Layout & type system
 Default Instagram portrait canvas: **1080×1350 px**. RTL direction. Default safe area ≥80 px around edges, with additional reserve for a persistent brand bar. Repeat counter (upper left), category tag (upper right), brand mark (lower left), swipe cue (lower right except final). Adapt these positions only when brand assets or visual hierarchy require it.
 
-Typography is responsive: initial headline range ~76–124 px; supporting text ~38–52 px; small labels ~26–36 px. These are *starting values*, not fixed absolutes. The headline's width, line breaks, and physical bounds determine size. Do not reduce supporting copy below readable mobile scale just to fit more words. Use Cairo if locally available/licensed, otherwise an appropriate Arabic fallback; never rely on network font downloads. Carefully test Arabic joining, diacritics, Arabic-Indic digits, parentheses, mixed Latin segments, RTL alignment and punctuation.
+Typography is responsive: initial headline range ~76–124 px; supporting text ~38–52 px; small labels ~26–36 px. These are *starting values*, not fixed absolutes. The headline's width, line breaks, and physical bounds determine size. Do not reduce supporting copy below readable mobile scale just to fit more words. Cairo (OFL) is bundled and embedded automatically; for a brand typeface use `brand.font_file` with a local font the user is licensed to use. Never rely on network font downloads. Carefully test Arabic joining, diacritics, Arabic-Indic digits, parentheses, mixed Latin segments, RTL alignment and punctuation.
 
 Color: WCAG-inspired strong contrast for text. Limit to one dominant accent plus semantic exceptions. Use deliberate highlights, not a mandatory underline on every slide. Illustrations and shapes reinforce meaning and stay behind text. Respect user's 'no frames' preference when present. Photos are only used when permitted by the user and are not sourced from search without appropriate rights.
 
@@ -74,7 +74,7 @@ Never call an automatic score a visually certified design. The report is preflig
 ## Stage 6 — Multi-gate QA (mandatory)
 1. **Editorial:** coherent arc, clear hook, no duplicate slides, useful CTA, claim ledger reviewed.
 2. **Arabic:** spelling/hamza/grammar/register, RTL, digits, glyph joining, line breaks and Latin text.
-3. **Visual:** verify actual PNG, not just source; no clipping or overlap, safe-area consistency, readable hierarchy, contrast and aligned brand bars.
+3. **Visual:** verify actual PNG, not just source; no clipping or overlap, safe-area consistency, readable hierarchy, contrast and aligned brand bars. `audit.py` reads the measured `geometry.json` (safe area, overlaps, text over images, overflow, headline lines, smallest text); fix every geometry error by shortening copy or changing layout, then re-render. Geometry passing is necessary, not sufficient: still open every PNG.
 4. **Technical:** files exist, correct dimensions, correct slide ordering/count, no broken local assets, valid HTML and reproducibility.
 5. **Accessibility:** legible at phone size, no information conveyed only via color, meaningful alt text in published descriptions if images carry factual content.
 

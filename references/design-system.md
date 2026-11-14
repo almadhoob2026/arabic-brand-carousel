@@ -14,7 +14,7 @@ Headline approx 76–124px (dependent on copy length). Supporting 38–52px. Met
 - Do not use a western display font without Arabic glyph coverage.
 
 ## Layout families
-hero, statement, numbered steps, compact list, comparison, metric, quote and CTA. Vary according to content; contrast and spacing matter more than novelty.
+The renderer implements 12 layouts (see `schema.md`): cover, statement, steps/list, checklist, metric, comparison, before-after, quote, timeline, grid, Q&A and CTA. Choose the layout from the *shape of the content*, not for novelty: a number → metric; two options → comparison; a change → before-after; a sequence → timeline or steps; parallel ideas → grid; a common question → Q&A. Write the content into the matching field and let the layout follow. Avoid the same interior layout three times in a row (critique flags it).
 
 ## Image treatment
 Images must be provided, licensed or explicitly approved for generation; do not assume arbitrary web image usage is permitted. Each illustration should communicate a point. Avoid decorative frames if inconsistent with brand direction.
