@@ -31,4 +31,12 @@ class DeckTest(unittest.TestCase):
         self.assertIn('&lt;script&gt;',result)
         self.assertNotIn('<script>alert(1)</script>',result)
 
+    def test_css_tokens_single_prefix(self):
+        markup=make_html(load_deck(self.example))
+        self.assertIn(';--headline-scale:',markup)
+        self.assertNotIn('----',markup)
+
+    def test_brand_handle_isolated(self):
+        self.assertIn('<bdi>@yourbrand</bdi>',make_html(load_deck(self.example)))
+
 if __name__=='__main__':unittest.main()
