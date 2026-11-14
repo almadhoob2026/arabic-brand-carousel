@@ -19,5 +19,7 @@ hero, statement, numbered steps, compact list, comparison, metric, quote and CTA
 ## Image treatment
 Images must be provided, licensed or explicitly approved for generation; do not assume arbitrary web image usage is permitted. Each illustration should communicate a point. Avoid decorative frames if inconsistent with brand direction.
 
+Renderer layouts (see `schema.md`): `background` for covers and emotional statements (raise `overlay` until critique shows no contrast blocker), `top` for an object or scene that the headline explains, `side` for a diagram/product next to steps or a list. Use at most one image per slide and vary layouts across the deck. Use `fit: "contain"` for diagrams, charts, screenshots and logos-as-content so nothing meaningful is cropped; `cover` suits photos. Crop with `position` so faces and key details avoid the text area. Always set a meaningful Arabic `alt` and the `rights` status.
+
 ## Visual QA
 Scan each output at 100%, then view montage at mobile-equivalent width. Text must not be clipped or obscured, brand bar aligned, accent consistent, source labels legible, no decorative object under headline. Contrast and readability trump stylistic flair.

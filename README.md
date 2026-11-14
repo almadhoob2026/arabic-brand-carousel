@@ -12,6 +12,7 @@
 - تعليمات `SKILL.md` مستقلة وقابلة للاستخدام في بيئات المساعدات التي تدعم المهارات.
 - خط سير إنتاج كامل من الفكرة إلى الصور، مع ضبط عربي RTL فعلي.
 - محرّك HTML/Chromium محلي لإخراج شرائح 1080×1350.
+- **دعم الصور والشعار**: صورة خلفية كاملة مع طبقة تعتيم، أو صورة أعلى الشريحة، أو صورة جانبية، وشعار بجانب الحساب. الصور ملفات محلية تُضمَّن داخل الملف، مع فحص التباين والدقة وحقوق الاستخدام.
 - ملف JSON قابل للتعديل، HTML مستقل، PNG لكل شريحة، صورة معاينة مجمعة، وملف ZIP.
 - **محرر مرئي تجريبي يعمل داخل المتصفح**: تعديل العلامة والشرائح، إضافة/نسخ/ترتيب، معاينة وتصدير PNG/JSON دون خادم. [جرّب المحرر](editor/index.html) (حمّل الملف وافتحه محليًا).
 - اختبارات مبدئية للتحقق من المحتوى والمقاس والحدود، ومقياس جودة تحريري من 100 نقطة.
@@ -65,6 +66,7 @@ Requires Python 3.10+, Chromium (or another Playwright-managed Chromium executab
 python -m pip install -r requirements.txt
 python -m playwright install chromium
 python scripts/render.py examples/demo.json --out output/demo
+python scripts/render.py examples/demo-images.json --out output/demo-images  # photos + logo
 python scripts/audit.py output/demo --deck examples/demo.json
 python -m unittest discover -s tests -v
 ```
@@ -87,7 +89,7 @@ The skill's editorial and visual acceptance criteria require human inspection. P
 
 ## Deck contract
 
-See [`references/schema.md`](references/schema.md) and [`examples/demo.json`](examples/demo.json). The sample uses abstract decorative shapes and simulated educational content; it does not claim real-world data.
+See [`references/schema.md`](references/schema.md), [`examples/demo.json`](examples/demo.json) and [`examples/demo-images.json`](examples/demo-images.json) (local photos and a logo). The sample uses abstract decorative shapes and simulated educational content; it does not claim real-world data.
 
 ## Project structure
 
@@ -100,8 +102,10 @@ scripts/render.py             # JSON → HTML + PNG + contact sheet + ZIP
 scripts/audit.py              # technical output checks
 scripts/critique.py           # preflight critique (v3)
 scripts/taste.py              # design direction + sliders (v3)
+scripts/assets.py             # local image/logo loading and checks
 editor/index.html             # offline visual editor (beta)
-examples/demo.json
+examples/demo.json            # text-only sample
+examples/demo-images.json     # photos + logo sample (assets/ are generated, rights-free)
 tests/
 .github/workflows/ci.yml
 ```

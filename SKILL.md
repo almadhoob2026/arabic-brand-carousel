@@ -52,12 +52,15 @@ Typography is responsive: initial headline range ~76–124 px; supporting text ~
 
 Color: WCAG-inspired strong contrast for text. Limit to one dominant accent plus semantic exceptions. Use deliberate highlights, not a mandatory underline on every slide. Illustrations and shapes reinforce meaning and stay behind text. Respect user's 'no frames' preference when present. Photos are only used when permitted by the user and are not sourced from search without appropriate rights.
 
+**Images and logo in the renderer.** When the user supplies a logo or images (or approves generated ones), save them next to the deck and reference them by local path: `brand.logo` and per-slide `image` with `layout` = `background` / `top` / `side`, a required Arabic `alt`, and `rights`. Prefer an image on the cover and on 1–3 key slides rather than every slide. Full field list in `references/schema.md`. Never point to remote URLs; download/convert only files the user owns or provided.
+
 ## Stage 5 — Production
 Run the scripts from this skill's own directory (the folder containing this `SKILL.md`), or prefix paths with it. The repository's example implementation accepts a JSON slide deck and creates one editable HTML file, individual PNG files and a contact sheet. See `README.md` and `examples/demo.json`. When using it:
 
 ```bash
 python -m pip install -r requirements.txt
 python scripts/render.py examples/demo.json --out output/demo
+python scripts/render.py examples/demo-images.json --out output/demo-images   # images + logo
 python scripts/audit.py output/demo --deck examples/demo.json
 ```
 
