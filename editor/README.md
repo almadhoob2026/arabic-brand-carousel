@@ -23,3 +23,7 @@ The editor is a **beta** companion and canvas-based preview. Its rendering can d
 ## Arabic support
 
 Uses Canvas's RTL direction and available locally installed Arabic fonts. To use Cairo, install the font on your system; it is not bundled in this repository.
+
+## v3 Design Intelligence
+
+The right-hand brand editor now includes five design sliders and visual direction presets. These are stored in the deck's optional `design` JSON object. Export the JSON and run `python scripts/critique.py <deck.json>` for explainable preflight findings. The browser preview approximates the Chromium renderer; verify final PNGs with `scripts/render.py` and `scripts/audit.py`.

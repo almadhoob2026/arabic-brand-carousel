@@ -11,12 +11,67 @@
     "font_family": "Cairo, Noto Sans Arabic, DejaVu Sans, sans-serif"
   },
   "slides": [
-    {"kind":"cover","eyebrow":"دليل عملي","headline":"كيف تجعل المعلومة أسهل للفهم؟","body":"خمس خطوات بسيطة لتقديم الأفكار بوضوح.","decorative":"orb"},
-    {"kind":"statement","eyebrow":"١ / ابدأ","headline":"حدد الفكرة الأساسية","body":"اسأل نفسك: ما الرسالة الوحيدة التي أريد أن يتذكرها القارئ؟","decorative":"rings"},
-    {"kind":"statement","eyebrow":"٢ / اختصر","headline":"قلّل التفاصيل","body":"احتفظ بما يدعم المعنى، وانقل البقية إلى شرح لاحق.","decorative":"dots"},
-    {"kind":"steps","eyebrow":"٣ / رتّب","headline":"ابنِ مسارًا واضحًا","bullets":["قدّم الفكرة","اشرحها بمثال","اختم بخطوة قابلة للتطبيق"],"decorative":"none"},
-    {"kind":"statement","eyebrow":"٤ / وضّح","headline":"استخدم مثالًا قريبًا","body":"المثال الجيد يقرّب الفكرة المجردة دون أن يغيّر معناها.","decorative":"rings"},
-    {"kind":"statement","eyebrow":"٥ / راجع","headline":"اختبر وضوح النص","body":"اقرأه بحجم الهاتف: هل تُفهم الفكرة بسرعة؟","decorative":"dots"},
-    {"kind":"cta","eyebrow":"الخطوة التالية","headline":"جرّبها في منشورك القادم","body":"اختر فكرة واحدة وطبّق عليها هذه الخطوات.","cta":"ما الخطوة التي ستبدأ بها؟","decorative":"orb"}
-  ]
+    {
+      "kind": "cover",
+      "eyebrow": "دليل عملي",
+      "headline": "كيف تجعل المعلومة أسهل للفهم؟",
+      "body": "خمس خطوات بسيطة لتقديم الأفكار بوضوح.",
+      "decorative": "orb"
+    },
+    {
+      "kind": "statement",
+      "eyebrow": "١ / ابدأ",
+      "headline": "حدد الفكرة الأساسية",
+      "body": "اسأل نفسك: ما الرسالة الوحيدة التي أريد أن يتذكرها القارئ؟",
+      "decorative": "rings"
+    },
+    {
+      "kind": "statement",
+      "eyebrow": "٢ / اختصر",
+      "headline": "قلّل التفاصيل",
+      "body": "احتفظ بما يدعم المعنى، وانقل البقية إلى شرح لاحق.",
+      "decorative": "dots"
+    },
+    {
+      "kind": "steps",
+      "eyebrow": "٣ / رتّب",
+      "headline": "ابنِ مسارًا واضحًا",
+      "bullets": [
+        "قدّم الفكرة",
+        "اشرحها بمثال",
+        "اختم بخطوة قابلة للتطبيق"
+      ],
+      "decorative": "none"
+    },
+    {
+      "kind": "statement",
+      "eyebrow": "٤ / وضّح",
+      "headline": "استخدم مثالًا قريبًا",
+      "body": "المثال الجيد يقرّب الفكرة المجردة دون أن يغيّر معناها.",
+      "decorative": "rings"
+    },
+    {
+      "kind": "statement",
+      "eyebrow": "٥ / راجع",
+      "headline": "اختبر وضوح النص",
+      "body": "اقرأه بحجم الهاتف: هل تُفهم الفكرة بسرعة؟",
+      "decorative": "dots"
+    },
+    {
+      "kind": "cta",
+      "eyebrow": "الخطوة التالية",
+      "headline": "جرّبها في منشورك القادم",
+      "body": "اختر فكرة واحدة وطبّق عليها هذه الخطوات.",
+      "cta": "ما الخطوة التي ستبدأ بها؟",
+      "decorative": "orb"
+    }
+  ],
+  "design": {
+    "direction": "educational",
+    "design_variance": 5,
+    "visual_density": 5,
+    "contrast_level": 8,
+    "typographic_expression": 6,
+    "decoration_level": 2
+  }
 }

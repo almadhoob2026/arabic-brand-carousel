@@ -7,7 +7,7 @@ description: >-
   Supports 1080x1350 PNG slides, editable HTML and accessible review previews.
 ---
 
-# Arabic Brand Carousel — production workflow (v2.0)
+# Arabic Brand Carousel — production workflow (v3.0)
 
 ## Mission
 Turn the user's topic into a concise, accurate, visually consistent Arabic carousel. Act as an editor, designer, Arabic typesetter and QA reviewer. The deliverable is not only a list of slide captions: it is a rendered and checked collection of assets plus an editable source.
@@ -24,6 +24,17 @@ Turn the user's topic into a concise, accurate, visually consistent Arabic carou
 Extract a structured brief with: topic, takeaway, objective (awareness/education/leads/announcement), audience, tone/register, CTA, constraints, brand name/handle/logo, color palette, assets, citations and target platform. Infer what is known. Ask only for a missing logo/wordmark and palette when meaningful brand fidelity cannot otherwise be achieved; proceed with declared defaults if the user prefers. Never ask users to choose font or layout unless they ask.
 
 Brand tokens: background, foreground, accent, muted, surface, font family, safe zones, typography scale, highlight style, image treatment, category label and brand mark placement. Inspect references for these. If brand guidance conflicts with the default template, brand guidance wins unless it compromises readability or safety.
+
+
+## Stage 1a — Brand-first visual intelligence (v3)
+Read `BRAND.md`, `DESIGN.md`, and `EDITORIAL.md` when project-specific copies exist. Treat placeholders as unconfigured, not user facts. Brand constraints and readability override any preset. Before rendering, choose the visual direction from `references/visual-directions.md` and configure `design` sliders using `references/taste-engine.md`. Choose values for the brief rather than maximizing every slider.
+
+The five taste dimensions are `design_variance`, `visual_density`, `contrast_level`, `typographic_expression`, and `decoration_level` (integers 1–10). In the deck JSON, use `design.direction` with optional overrides. The default direction is `editorial`; all existing decks without `design` still work. Presets do not replace the brand palette or invent logos. Design tokens affect the deterministic renderer only where implemented and tested; layout advice is not a promise of automated restructuring.
+
+## Stage 5a — Explainable critique and polish (v3)
+Before final export, run `python scripts/critique.py examples/demo.json --out output/critique.json`. It identifies duplicate headlines, overlong content, contrast defects, repetitive decorations, and missing sources on explicit `metric` fields. Review proposed layout families *as suggestions*; respect authored kinds. Read `references/anti-patterns.md` and `references/critique-polish.md` for hard-versus-soft failures, actionable correction, rerendering and visual review. Recheck after each correction.
+
+Never call an automatic score a visually certified design. The report is preflight only; rendered-image review and fact verification remain mandatory. Do not install third-party design skills or scrape their proprietary material to make this work.
 
 ## Stage 2 — Research, editorial strategy and fact control
 Write privately before layout: (a) one-sentence promise; (b) audience pain point; (c) distinctive editorial angle; (d) hierarchy of supporting claims; (e) desired reader action.
@@ -72,6 +83,11 @@ Provide: PNG slides, a compact montage/contact sheet, editable HTML, deck JSON a
 - `references/design-system.md`: detailed layout and RTL rules
 - `references/qa-rubric.md`: measurable 100-point review criteria
 - `references/schema.md`: input and output contract
+- `references/taste-engine.md`: style directions and five design parameters
+- `references/visual-directions.md`: visual direction selection
+- `references/anti-patterns.md`: objective defects versus subjective warnings
+- `references/critique-polish.md`: preflight → visual review → polish loop
+- `BRAND.md`, `DESIGN.md`, `EDITORIAL.md`: editable project decision records
 - `examples/demo.json`: runnable sample deck
 
 ## Definition of done

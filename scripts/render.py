@@ -11,6 +11,7 @@ from pathlib import Path
 
 from PIL import Image, ImageOps, ImageDraw
 from playwright.sync_api import sync_playwright
+from taste import taste_profile, css_tokens
 
 W, H = 1080, 1350
 PALETTE = {
@@ -43,6 +44,7 @@ def load_deck(path):
                 raise ValueError(f'Slide {i} {k} is too long')
         if s.get('bullets') is not None and (not isinstance(s['bullets'], list) or len(s['bullets']) > 5 or not all(isinstance(x,str) and len(x) <= 180 for x in s['bullets'])):
             raise ValueError(f'Slide {i} has invalid bullets')
+    taste_profile(obj)
     return obj
 
 
@@ -82,7 +84,8 @@ def make_html(deck):
     font = b.get('font_family', 'Cairo, Noto Sans Arabic, DejaVu Sans, sans-serif')
     if not isinstance(font, str) or len(font)>160 or not re.fullmatch(r'[\w\s,\-"\']+', font, re.UNICODE):
         raise ValueError('Invalid local font_family')
-    stylevars = ';'.join(f'--{k}:{v}' for k,v in colors.items())
+    taste = taste_profile(deck)
+    stylevars = ';'.join(f'--{k}:{v}' for k,v in {**colors, **css_tokens(taste)}.items())
     slides = '\n'.join(make_slide(s, i, len(deck['slides']), b) for i,s in enumerate(deck['slides'],1))
     return '''<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Arabic Brand Carousel</title><style>
     :root{'''+stylevars+';--arabic-font:'+font+'''}
@@ -93,9 +96,11 @@ def make_html(deck):
     .counter{font-family:Arial,sans-serif;font-size:26px;color:var(--muted);letter-spacing:2px;direction:ltr;flex-shrink:0}
     .content{position:absolute;z-index:2;top:245px;left:85px;right:85px;bottom:185px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:right}
     .eyebrow{font-size:35px;font-weight:700;color:var(--accent);margin-bottom:33px;line-height:1.4}
-    .headline{font-size:100px;font-weight:900;line-height:1.27;letter-spacing:-1.5px;margin:0;overflow-wrap:break-word;max-width:100%;text-wrap:balance}
-    .cover .headline{font-size:109px}.cta .headline{font-size:102px}
-    .body{font-size:45px;line-height:1.7;color:var(--muted);font-weight:600;margin:44px 0 0;max-width:890px;overflow-wrap:break-word}
+    .headline{font-size:calc(100px * var(--headline-scale));font-weight:900;line-height:1.27;letter-spacing:-1.5px;margin:0;overflow-wrap:break-word;max-width:100%;text-wrap:balance}
+    .slide:nth-child(3n) .content{right:calc(85px + var(--layout-shift))}
+    .eyebrow:not(:empty){border-right:var(--accent-rule) solid var(--accent);padding-right:18px}
+    .cover .headline{font-size:calc(109px * var(--headline-scale))}.cta .headline{font-size:calc(102px * var(--headline-scale))}
+    .body{font-size:calc(45px * var(--body-scale));line-height:var(--body-leading);color:var(--muted);font-weight:600;margin:44px 0 0;max-width:890px;overflow-wrap:break-word}
     .cta-line{font-size:39px;font-weight:800;color:var(--accent);margin:46px 0 0}
     .steps{list-style:none;padding:0;margin:35px 0 0;width:100%;display:flex;flex-direction:column;gap:18px}
     .steps li{display:flex;align-items:center;gap:20px;background:var(--surface);border-radius:22px;padding:22px 26px;font-size:36px;font-weight:700;line-height:1.45}
@@ -104,7 +109,7 @@ def make_html(deck):
     .footer{position:absolute;z-index:3;bottom:72px;left:85px;right:85px;display:flex;justify-content:space-between;align-items:center;gap:20px;font-size:29px}
     .brandmark{font-weight:800;max-width:630px;overflow-wrap:anywhere}
     .swipe{color:var(--accent);font-weight:800}
-    .decoration{position:absolute;z-index:0;pointer-events:none;opacity:.23}
+    .decoration{position:absolute;z-index:0;pointer-events:none;opacity:var(--decoration-opacity)}
     .orb{width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0,transparent 70%);top:300px;left:-240px;filter:blur(70px)}
     .rings{width:600px;height:600px;border:8px solid var(--accent);border-radius:50%;left:-270px;top:410px;box-shadow:0 0 0 60px var(--background),0 0 0 70px var(--accent);opacity:.12}
     .dots{left:28px;top:400px;width:300px;height:480px;background-image:radial-gradient(var(--accent) 4px,transparent 5px);background-size:34px 34px;opacity:.18}
